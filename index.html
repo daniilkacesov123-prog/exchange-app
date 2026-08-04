@@ -209,48 +209,49 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-        // Курс (можно меняться через код/БД)
-        let EXCHANGE_RATE = 92.5; 
+    // Считываем курс из URL или ставим дефолтный 98.50
+    const urlParams = new URLSearchParams(window.location.search);
+    let EXCHANGE_RATE = parseFloat(urlParams.get('rate')) || 98.50;
 
-        document.getElementById('currentRate').innerText = `${EXCHANGE_RATE} ₽`;
+    document.getElementById('currentRate').innerText = `${EXCHANGE_RATE} ₽`;
 
-        const usdtInput = document.getElementById('usdtInput');
-        const rubResult = document.getElementById('rubResult');
+    const usdtInput = document.getElementById('usdtInput');
+    const rubResult = document.getElementById('rubResult');
 
-        usdtInput.addEventListener('input', () => {
-            const usdt = parseFloat(usdtInput.value) || 0;
-            const rub = (usdt * EXCHANGE_RATE).toFixed(2);
-            rubResult.innerText = `${rub} ₽`;
-        });
+    usdtInput.addEventListener('input', () => {
+        const usdt = parseFloat(usdtInput.value) || 0;
+        const rub = (usdt * EXCHANGE_RATE).toFixed(2);
+        rubResult.innerText = `${rub} ₽`;
+    });
 
-        document.getElementById('sendBtn').addEventListener('click', () => {
-            const usdt = usdtInput.value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const fullName = document.getElementById('fullName').value.trim();
-            const bankName = document.getElementById('bankName').value.trim();
-            const cardNumber = document.getElementById('cardNumber').value.trim();
+    document.getElementById('sendBtn').addEventListener('click', () => {
+        const usdt = usdtInput.value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const fullName = document.getElementById('fullName').value.trim();
+        const bankName = document.getElementById('bankName').value.trim();
+        const cardNumber = document.getElementById('cardNumber').value.trim();
 
-            if (!usdt || !phone || !fullName || !bankName) {
-                tg.showAlert('Пожалуйста, заполните обязательные поля!');
-                return;
-            }
+        if (!usdt || !phone || !fullName || !bankName) {
+            tg.showAlert('Пожалуйста, заполните обязательные поля!');
+            return;
+        }
 
-            const data = {
-                usdt: usdt,
-                rub: (parseFloat(usdt) * EXCHANGE_RATE).toFixed(2),
-                rate: EXCHANGE_RATE,
-                phone: phone,
-                fullName: fullName,
-                bankName: bankName,
-                cardNumber: cardNumber || "Не указана"
-            };
+        const data = {
+            usdt: usdt,
+            rub: (parseFloat(usdt) * EXCHANGE_RATE).toFixed(2),
+            rate: EXCHANGE_RATE,
+            phone: phone,
+            fullName: fullName,
+            bankName: bankName,
+            cardNumber: cardNumber || "Не указана"
+        };
 
-            tg.sendData(JSON.stringify(data));
-            tg.close();
-        });
+        tg.sendData(JSON.stringify(data));
+        tg.close();
+    });
     </script>
 </body>
 </html>
