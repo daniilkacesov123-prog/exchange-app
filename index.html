@@ -2,30 +2,200 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Обменник</title>
-    <!-- Обязательное подключение скрипта Telegram -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Обмен USDT</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg-color: #17212b;
+            --card-bg: #242f3d;
+            --accent-color: #5288c1;
+            --text-color: #ffffff;
+            --text-hint: #7f91a4;
+            --input-bg: #1d2733;
+        }
+
         body {
-            background-color: #1c1c1e;
-            color: #ffffff;
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .rate-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .rate-title {
+            color: var(--text-hint);
+            font-size: 14px;
+        }
+
+        .rate-value {
+            font-weight: bold;
+            color: #4cd964;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-hint);
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 15px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .calc-result {
+            background-color: var(--input-bg);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-align: right;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-submit:active {
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-    <h1>Обменник работает! 🔥</h1>
+    <div class="container">
+        <!-- Панель курса -->
+        <div class="rate-card">
+            <span class="rate-title">Текущий курс USDT:</span>
+            <span class="rate-value" id="currentRate">-- ₽</span>
+        </div>
+
+        <!-- Калькулятор -->
+        <div class="form-group">
+            <label>Отдаете (USDT):</label>
+            <input type="number" id="usdtInput" placeholder="0.00" step="any">
+        </div>
+
+        <div class="form-group">
+            <label>Получаете (Рубли):</label>
+            <div class="calc-result" id="rubResult">0 ₽</div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+        <!-- Реквизиты -->
+        <div class="form-group">
+            <label>ФИО получателя:</label>
+            <input type="text" id="fullName" placeholder="Иванов Иван Иванович">
+        </div>
+
+        <div class="form-group">
+            <label>Номер карты / СБП:</label>
+            <input type="text" id="cardNumber" placeholder="2202 .... .... ....">
+        </div>
+
+        <div class="form-group">
+            <label>Банк:</label>
+            <input type="text" id="bankName" placeholder="Сбербанк, Т-Банк и т.д.">
+        </div>
+
+        <div class="form-group">
+            <label>Номер телефона (для связи):</label>
+            <input type="tel" id="phone" placeholder="+7 (999) 000-00-00">
+        </div>
+
+        <button class="btn-submit" id="sendBtn">Отправить заявку</button>
+    </div>
 
     <script>
-        // Сообщаем Telegram, что приложение готово к отображению
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand(); // Разворачиваем на весь экран
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Фиксированный курс (потом сделаем динамическим через бота)
+        let EXCHANGE_RATE = 92.5; 
+
+        document.getElementById('currentRate').innerText = `${EXCHANGE_RATE} ₽`;
+
+        const usdtInput = document.getElementById('usdtInput');
+        const rubResult = document.getElementById('rubResult');
+
+        // Авто-пересчет при вводе
+        usdtInput.addEventListener('input', () => {
+            const usdt = parseFloat(usdtInput.value) || 0;
+            const rub = (usdt * EXCHANGE_RATE).toFixed(2);
+            rubResult.innerText = `${rub} ₽`;
+        });
+
+        // Отправка заявки обратно в бота
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const usdt = usdtInput.value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const bankName = document.getElementById('bankName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!usdt || !fullName || !cardNumber || !bankName) {
+                tg.showAlert('Пожалуйста, заполните основные поля!');
+                return;
+            }
+
+            const data = {
+                usdt: usdt,
+                rub: (parseFloat(usdt) * EXCHANGE_RATE).toFixed(2),
+                rate: EXCHANGE_RATE,
+                fullName: fullName,
+                cardNumber: cardNumber,
+                bankName: bankName,
+                phone: phone
+            };
+
+            // Отправляем данные боту в формате JSON
+            tg.sendData(JSON.stringify(data));
+        });
     </script>
 </body>
 </html>
