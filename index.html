@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Обмен USDT</title>
+    <title>Good Exchange</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-color: #0b0e14;
             --card-bg: #141a24;
             --input-bg: #1a2230;
-            --accent-color: #5865f2;
+            --accent-purple: #5865f2;
             --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             --text-main: #ffffff;
             --text-muted: #8b9bb4;
@@ -23,47 +23,182 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 16px;
+            padding: 12px;
             box-sizing: border-box;
+            user-select: none;
         }
 
         .container {
-            max-width: 420px;
+            max-width: 440px;
             margin: 0 auto;
         }
 
-        /* Заголовок в стиле референса */
-        .brand-header {
+        /* ---------------- Верхнее меню (Табы) ---------------- */
+        .top-nav {
+            display: flex;
+            background: #141923;
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+            gap: 2px;
+        }
+
+        .nav-item {
+            flex: 1;
             text-align: center;
+            padding: 8px 4px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, #3730a3 0%, #5b21b6 100%);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* ---------------- Контентные вкладки ---------------- */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ---------------- Вкладка 1: Главная (Профиль) ---------------- */
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px 16px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .avatar-wrapper {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #2a3447;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .user-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
             margin-bottom: 20px;
         }
 
-        .brand-title {
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: #ffffff;
+        .badge {
+            background: #1e293b;
+            border: 1px solid var(--border-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
-        .brand-title span {
-            color: #ef4444;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
-        /* Карточка курса */
+        .stat-box {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: left;
+        }
+
+        .stat-val {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .full-stat-box {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: left;
+        }
+
+        .support-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .support-icon {
+            width: 42px;
+            height: 42px;
+            background: #1e293b;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #60a5fa;
+        }
+
+        /* ---------------- Вкладка 2: Обмен (Сделки) ---------------- */
         .rate-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 14px;
             padding: 14px 18px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .rate-title {
-            color: var(--text-muted);
-            font-size: 14px;
         }
 
         .rate-value {
@@ -72,45 +207,36 @@
             font-size: 17px;
         }
 
-        /* Карточки секций */
         .section-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
         }
 
         .section-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             color: #d1d5db;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group:last-child {
-            margin-bottom: 0;
+            margin-bottom: 12px;
         }
 
         label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
             margin-bottom: 6px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 12px;
             background-color: var(--input-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -118,16 +244,15 @@
             font-size: 15px;
             box-sizing: border-box;
             outline: none;
-            transition: border-color 0.2s;
         }
 
         input:focus {
-            border-color: var(--accent-color);
+            border-color: var(--accent-purple);
         }
 
         .calc-result {
             background-color: var(--input-bg);
-            padding: 12px 14px;
+            padding: 12px;
             border-radius: 10px;
             font-size: 18px;
             font-weight: 700;
@@ -136,7 +261,6 @@
             border: 1px solid var(--border-color);
         }
 
-        /* Кнопка */
         .btn-submit {
             width: 100%;
             background: var(--accent-gradient);
@@ -148,110 +272,227 @@
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
-            transition: opacity 0.2s;
         }
 
-        .btn-submit:active {
-            opacity: 0.85;
+        /* ---------------- Вкладка 3: История ---------------- */
+        .banner-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 14px;
+        }
+
+        .empty-history {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 54px;
+            height: 54px;
+            background: var(--input-bg);
+            border-radius: 14px;
+            margin: 0 auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
     <div class="container">
 
-        <!-- Панель курса -->
-        <div class="rate-card">
-            <span class="rate-title">Курс продажи USDT:</span>
-            <span class="rate-value" id="currentRate">-- ₽</span>
-        </div>
-
-        <!-- Калькулятор -->
-        <div class="section-card">
-            <div class="section-title">🧮 Калькулятор</div>
-
-            <div class="form-group">
-                <label>Отдаёте (USDT)</label>
-                <input type="number" id="usdtInput" placeholder="0.00" step="any">
+        <!-- Верхнее навигационное меню -->
+        <div class="top-nav">
+            <div class="nav-item active" onclick="switchTab('main', this)">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                Главная
             </div>
-
-            <div class="form-group">
-                <label>Получаете (Рубли)</label>
-                <div class="calc-result" id="rubResult">0.00 ₽</div>
+            <div class="nav-item" onclick="switchTab('exchange', this)">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                Сделки
+            </div>
+            <div class="nav-item" onclick="switchTab('history', this)">
+                <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                История
             </div>
         </div>
 
-        <!-- Реквизиты -->
-        <div class="section-card">
-            <div class="section-title">📋 Реквизиты получателя</div>
+        <!-- ================= Вкладка 1: Главная ================= -->
+        <div id="tab-main" class="tab-content active">
+            <div class="profile-card">
+                <div class="avatar-wrapper">
+                    <div class="avatar-img" id="userAvatar">👤</div>
+                </div>
+                <div class="user-name" id="userName">Пользователь</div>
 
-            <div class="form-group">
-                <label>Тел. для перевода (СБП)</label>
-                <input type="tel" id="phone" placeholder="+7 (999) 000-00-00">
+                <div class="badge-container">
+                    <span class="badge">🏅 НОВИЧОК</span>
+                    <span class="badge">👥 В боте: 1</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-val">0</div>
+                        <div class="stat-lbl">🔄 Обмены</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val">0 ₽</div>
+                        <div class="stat-lbl">📊 Оборот</div>
+                    </div>
+                </div>
+
+                <div class="full-stat-box">
+                    <div class="stat-val">0 ₽</div>
+                    <div class="stat-lbl">⏱ Оборот за 24 часа</div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>ФИО получателя</label>
-                <input type="text" id="fullName" placeholder="Иванов Иван Иванович">
-            </div>
-
-            <div class="form-group">
-                <label>Банк</label>
-                <input type="text" id="bankName" placeholder="Сбербанк, Т-Банк и т.д.">
-            </div>
-
-            <div class="form-group">
-                <label>Номер карты</label>
-                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000">
+            <div class="support-card">
+                <div class="support-icon">💬</div>
+                <div>
+                    <div style="font-weight: 700; font-size: 15px;">Поддержка</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Связаться с оператором</div>
+                </div>
             </div>
         </div>
 
-        <button class="btn-submit" id="sendBtn">Подать заявку</button>
+        <!-- ================= Вкладка 2: Сделки (Обмен) ================= -->
+        <div id="tab-exchange" class="tab-content">
+            <div class="rate-card">
+                <span style="color: var(--text-muted); font-size: 14px;">Курс продажи USDT:</span>
+                <span class="rate-value" id="currentRate">-- ₽</span>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title">🧮 Калькулятор</div>
+
+                <div class="form-group">
+                    <label>Отдаёте (USDT)</label>
+                    <input type="number" id="usdtInput" placeholder="0.00" step="any">
+                </div>
+
+                <div class="form-group">
+                    <label>Получаете (Рубли)</label>
+                    <div class="calc-result" id="rubResult">0.00 ₽</div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-title">📋 Реквизиты получателя</div>
+
+                <div class="form-group">
+                    <label>Тел. для перевода (СБП)</label>
+                    <input type="tel" id="phone" placeholder="+7 (999) 000-00-00">
+                </div>
+
+                <div class="form-group">
+                    <label>ФИО получателя</label>
+                    <input type="text" id="fullName" placeholder="Иванов Иван Иванович">
+                </div>
+
+                <div class="form-group">
+                    <label>Банк</label>
+                    <input type="text" id="bankName" placeholder="Сбербанк, Т-Банк и т.д.">
+                </div>
+
+                <div class="form-group">
+                    <label>Номер карты (необязательно)</label>
+                    <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000">
+                </div>
+            </div>
+
+            <button class="btn-submit" id="sendBtn">Подать заявку</button>
+        </div>
+
+        <!-- ================= Вкладка 3: История ================= -->
+        <div id="tab-history" class="tab-content">
+            <div class="banner-card">
+                <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">📑 История обменов</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Все ваши заявки и их статусы</div>
+            </div>
+
+            <div class="empty-history">
+                <div class="empty-icon">📂</div>
+                <div style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">Пока нет заявок</div>
+                <button class="btn-submit" onclick="switchTab('exchange', document.querySelectorAll('.nav-item')[1])" style="width: auto; padding: 12px 24px;">
+                    Сделать первый обмен
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-    // Считываем курс из URL или ставим дефолтный 98.50
-    const urlParams = new URLSearchParams(window.location.search);
-    let EXCHANGE_RATE = parseFloat(urlParams.get('rate')) || 98.50;
-
-    document.getElementById('currentRate').innerText = `${EXCHANGE_RATE} ₽`;
-
-    const usdtInput = document.getElementById('usdtInput');
-    const rubResult = document.getElementById('rubResult');
-
-    usdtInput.addEventListener('input', () => {
-        const usdt = parseFloat(usdtInput.value) || 0;
-        const rub = (usdt * EXCHANGE_RATE).toFixed(2);
-        rubResult.innerText = `${rub} ₽`;
-    });
-
-    document.getElementById('sendBtn').addEventListener('click', () => {
-        const usdt = usdtInput.value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const fullName = document.getElementById('fullName').value.trim();
-        const bankName = document.getElementById('bankName').value.trim();
-        const cardNumber = document.getElementById('cardNumber').value.trim();
-
-        if (!usdt || !phone || !fullName || !bankName) {
-            tg.showAlert('Пожалуйста, заполните обязательные поля!');
-            return;
+        // 1. Подгружаем данные пользователя из Telegram
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const user = tg.initDataUnsafe.user;
+            document.getElementById('userName').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            
+            if (user.photo_url) {
+                document.getElementById('userAvatar').innerHTML = `<img src="${user.photo_url}" class="avatar-img">`;
+            } else {
+                document.getElementById('userAvatar').innerText = user.first_name.charAt(0).toUpperCase();
+            }
         }
 
-        const data = {
-            usdt: usdt,
-            rub: (parseFloat(usdt) * EXCHANGE_RATE).toFixed(2),
-            rate: EXCHANGE_RATE,
-            phone: phone,
-            fullName: fullName,
-            bankName: bankName,
-            cardNumber: cardNumber || "Не указана"
-        };
+        // 2. Логика переключения табов
+        function switchTab(tabName, el) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 
-        tg.sendData(JSON.stringify(data));
-        tg.close();
-    });
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            el.classList.add('active');
+        }
+
+        // 3. Калькулятор обмена
+        const urlParams = new URLSearchParams(window.location.search);
+        let EXCHANGE_RATE = parseFloat(urlParams.get('rate')) || 98.50;
+        document.getElementById('currentRate').innerText = `${EXCHANGE_RATE} ₽`;
+
+        const usdtInput = document.getElementById('usdtInput');
+        const rubResult = document.getElementById('rubResult');
+
+        usdtInput.addEventListener('input', () => {
+            const usdt = parseFloat(usdtInput.value) || 0;
+            const rub = (usdt * EXCHANGE_RATE).toFixed(2);
+            rubResult.innerText = `${rub} ₽`;
+        });
+
+        // 4. Отправка заявки
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const usdt = usdtInput.value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+            const bankName = document.getElementById('bankName').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+
+            if (!usdt || !phone || !fullName || !bankName) {
+                tg.showAlert('Пожалуйста, заполните обязательные поля!');
+                return;
+            }
+
+            const data = {
+                usdt: usdt,
+                rub: (parseFloat(usdt) * EXCHANGE_RATE).toFixed(2),
+                rate: EXCHANGE_RATE,
+                phone: phone,
+                fullName: fullName,
+                bankName: bankName,
+                cardNumber: cardNumber || "Не указана"
+            };
+
+            tg.sendData(JSON.stringify(data));
+            tg.close();
+        });
     </script>
 </body>
 </html>
