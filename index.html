@@ -7,71 +7,118 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #17212b;
-            --card-bg: #242f3d;
-            --accent-color: #5288c1;
-            --text-color: #ffffff;
-            --text-hint: #7f91a4;
-            --input-bg: #1d2733;
+            --bg-color: #0b0e14;
+            --card-bg: #141a24;
+            --input-bg: #1a2230;
+            --accent-color: #5865f2;
+            --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --green-rate: #22c55e;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             margin: 0;
             padding: 16px;
             box-sizing: border-box;
         }
 
         .container {
-            max-width: 400px;
+            max-width: 420px;
             margin: 0 auto;
         }
 
+        /* Заголовок в стиле референса */
+        .brand-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        .brand-title span {
+            color: #ef4444;
+        }
+
+        /* Карточка курса */
         .rate-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 12px 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px 18px;
             margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .rate-title {
-            color: var(--text-hint);
+            color: var(--text-muted);
             font-size: 14px;
         }
 
         .rate-value {
-            font-weight: bold;
-            color: #4cd964;
-            font-size: 16px;
+            font-weight: 700;
+            color: var(--green-rate);
+            font-size: 17px;
+        }
+
+        /* Карточки секций */
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: #d1d5db;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .form-group {
             margin-bottom: 14px;
         }
 
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
         label {
             display: block;
-            font-size: 13px;
-            color: var(--text-hint);
+            font-size: 12px;
+            color: var(--text-muted);
             margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         input {
             width: 100%;
-            padding: 12px;
+            padding: 12px 14px;
             background-color: var(--input-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-main);
             font-size: 15px;
             box-sizing: border-box;
             outline: none;
+            transition: border-color 0.2s;
         }
 
         input:focus {
@@ -80,82 +127,92 @@
 
         .calc-result {
             background-color: var(--input-bg);
-            padding: 12px;
-            border-radius: 8px;
+            padding: 12px 14px;
+            border-radius: 10px;
             font-size: 18px;
-            font-weight: bold;
-            color: var(--accent-color);
+            font-weight: 700;
+            color: #60a5fa;
             text-align: right;
+            border: 1px solid var(--border-color);
         }
 
+        /* Кнопка */
         .btn-submit {
             width: 100%;
-            background-color: var(--accent-color);
+            background: var(--accent-gradient);
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 10px;
+            padding: 16px;
+            border-radius: 12px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            transition: opacity 0.2s;
         }
 
         .btn-submit:active {
-            opacity: 0.8;
+            opacity: 0.85;
         }
     </style>
 </head>
 <body>
     <div class="container">
+
         <!-- Панель курса -->
         <div class="rate-card">
-            <span class="rate-title">Текущий курс USDT:</span>
+            <span class="rate-title">Курс продажи USDT:</span>
             <span class="rate-value" id="currentRate">-- ₽</span>
         </div>
 
         <!-- Калькулятор -->
-        <div class="form-group">
-            <label>Отдаете (USDT):</label>
-            <input type="number" id="usdtInput" placeholder="0.00" step="any">
-        </div>
+        <div class="section-card">
+            <div class="section-title">🧮 Калькулятор</div>
 
-        <div class="form-group">
-            <label>Получаете (Рубли):</label>
-            <div class="calc-result" id="rubResult">0 ₽</div>
-        </div>
+            <div class="form-group">
+                <label>Отдаёте (USDT)</label>
+                <input type="number" id="usdtInput" placeholder="0.00" step="any">
+            </div>
 
-        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+            <div class="form-group">
+                <label>Получаете (Рубли)</label>
+                <div class="calc-result" id="rubResult">0.00 ₽</div>
+            </div>
+        </div>
 
         <!-- Реквизиты -->
-        <div class="form-group">
-            <label>ФИО получателя:</label>
-            <input type="text" id="fullName" placeholder="Иванов Иван Иванович">
+        <div class="section-card">
+            <div class="section-title">📋 Реквизиты получателя</div>
+
+            <div class="form-group">
+                <label>Тел. для перевода (СБП)</label>
+                <input type="tel" id="phone" placeholder="+7 (999) 000-00-00">
+            </div>
+
+            <div class="form-group">
+                <label>ФИО получателя</label>
+                <input type="text" id="fullName" placeholder="Иванов Иван Иванович">
+            </div>
+
+            <div class="form-group">
+                <label>Банк</label>
+                <input type="text" id="bankName" placeholder="Сбербанк, Т-Банк и т.д.">
+            </div>
+
+            <div class="form-group">
+                <label>Номер карты (необязательно)</label>
+                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000">
+            </div>
         </div>
 
-        <div class="form-group">
-            <label>Номер карты / СБП:</label>
-            <input type="text" id="cardNumber" placeholder="2202 .... .... ....">
-        </div>
-
-        <div class="form-group">
-            <label>Банк:</label>
-            <input type="text" id="bankName" placeholder="Сбербанк, Т-Банк и т.д.">
-        </div>
-
-        <div class="form-group">
-            <label>Номер телефона (для связи):</label>
-            <input type="tel" id="phone" placeholder="+7 (999) 000-00-00">
-        </div>
-
-        <button class="btn-submit" id="sendBtn">Отправить заявку</button>
+        <button class="btn-submit" id="sendBtn">Подать заявку</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Фиксированный курс (потом сделаем динамическим через бота)
+        // Курс (можно меняться через код/БД)
         let EXCHANGE_RATE = 92.5; 
 
         document.getElementById('currentRate').innerText = `${EXCHANGE_RATE} ₽`;
@@ -163,23 +220,21 @@
         const usdtInput = document.getElementById('usdtInput');
         const rubResult = document.getElementById('rubResult');
 
-        // Авто-пересчет при вводе
         usdtInput.addEventListener('input', () => {
             const usdt = parseFloat(usdtInput.value) || 0;
             const rub = (usdt * EXCHANGE_RATE).toFixed(2);
             rubResult.innerText = `${rub} ₽`;
         });
 
-        // Отправка заявки обратно в бота
         document.getElementById('sendBtn').addEventListener('click', () => {
             const usdt = usdtInput.value.trim();
-            const fullName = document.getElementById('fullName').value.trim();
-            const cardNumber = document.getElementById('cardNumber').value.trim();
-            const bankName = document.getElementById('bankName').value.trim();
             const phone = document.getElementById('phone').value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+            const bankName = document.getElementById('bankName').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.trim();
 
-            if (!usdt || !fullName || !cardNumber || !bankName) {
-                tg.showAlert('Пожалуйста, заполните основные поля!');
+            if (!usdt || !phone || !fullName || !bankName) {
+                tg.showAlert('Пожалуйста, заполните обязательные поля!');
                 return;
             }
 
@@ -187,14 +242,14 @@
                 usdt: usdt,
                 rub: (parseFloat(usdt) * EXCHANGE_RATE).toFixed(2),
                 rate: EXCHANGE_RATE,
+                phone: phone,
                 fullName: fullName,
-                cardNumber: cardNumber,
                 bankName: bankName,
-                phone: phone
+                cardNumber: cardNumber || "Не указана"
             };
 
-            // Отправляем данные боту в формате JSON
             tg.sendData(JSON.stringify(data));
+            tg.close();
         });
     </script>
 </body>
