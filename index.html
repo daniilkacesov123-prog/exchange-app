@@ -353,7 +353,7 @@
                 </div>
             </div>
 
-            <div class="support-card">
+            <div class="support-card" onclick="openSupport()" style="cursor: pointer;">
                 <div class="support-icon">💬</div>
                 <div>
                     <div style="font-weight: 700; font-size: 15px;">Поддержка</div>
@@ -493,6 +493,12 @@
             tg.sendData(JSON.stringify(data));
             tg.close();
         });
+
+            function openSupport() {
+        // Вставь сюда username саппорта (без символа @)
+        const supportUsername = 'Babocha_nerd'; 
+        tg.openTelegramLink(`https://t.me/${supportUsername}`);
+    }
     </script>
 </body>
 </html>
