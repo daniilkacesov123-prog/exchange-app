@@ -324,6 +324,7 @@
         </div>
 
         <!-- ================= Вкладка 1: Главная ================= -->
+        
         <div id="tab-main" class="tab-content active">
             <div class="profile-card">
                 <div class="avatar-wrapper">
@@ -351,6 +352,29 @@
                     <div class="stat-val">0 ₽</div>
                     <div class="stat-lbl">⏱ Оборот за 24 часа</div>
                 </div>
+            </div>
+
+            <!-- БЛОК РЕФЕРАЛЬНОЙ ПРОГРАММЫ -->
+            <div class="section-card" style="margin-bottom: 14px;">
+                <div class="section-title">🤝 Реферальная программа</div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                    Приглашайте друзей и получайте <b style="color: #22c55e;">+$30</b> за каждого приведенного клиента!
+                </div>
+                
+                <div class="stats-grid" style="margin-bottom: 12px;">
+                    <div class="stat-box">
+                        <div class="stat-val" id="refCount">0 чел.</div>
+                        <div class="stat-lbl">👥 Приглашено</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-val" id="refEarned" style="color: #60a5fa;">0 $</div>
+                        <div class="stat-lbl">💰 Заработано</div>
+                    </div>
+                </div>
+
+                <button class="btn-submit" onclick="copyRefLink()" style="background: var(--input-bg); border: 1px solid var(--border-color); box-shadow: none; font-size: 14px; padding: 12px;">
+                    📋 Скопировать реф. ссылку
+                </button>
             </div>
 
             <div class="support-card" onclick="openSupport()" style="cursor: pointer;">
@@ -498,6 +522,25 @@
         const supportUsername = 'ScrgMcDuck';
         tg.openTelegramLink('https://t.me/' + supportUsername);
     }
+
+    // Копирование реферальной ссылки
+    function copyRefLink() {
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const userId = tg.initDataUnsafe.user.id;
+            
+            const botUsername = 'G00D_EXCHBot'; 
+            const refLink = `https://t.me/${botUsername}?start=ref_${userId}`;
+
+            navigator.clipboard.writeText(refLink).then(() => {
+                tg.showAlert('✅ Реферальная ссылка скопирована в буфер обмена!');
+            }).catch(() => {
+                tg.showAlert(`Ваша ссылка:\n${refLink}`);
+            });
+        } else {
+            tg.showAlert('Ошибка получения реферальной ссылки.');
+        }
+    }
+
     </script>
 </body>
 </html>
