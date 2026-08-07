@@ -351,80 +351,57 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        if (tg.requestFullscreen) tg.requestFullscreen();
 
-        // Читаем параметры из URL
+        // 1. Считываем данные из URL
         const urlParams = new URLSearchParams(window.location.search);
-        let rawData = urlParams.get('data');
-        
+        const rawData = urlParams.get('data');
+
         let appData = {
-            rate: parseFloat(urlParams.get('rate')) || 98.50,
-            total_users: urlParams.get('users') || 0,
+            rate: 98.50,
+            total_users: 0,
             completed_exchanges: 0,
             live_status: "",
-            user_stats: { exchanges: 0, volume: 0, volume_24h: 0, refs: 0, ref_income: 0, rank: "🥉 Новичок I", place: 0 },
+            user_stats: { exchanges: 0, volume: 0, volume_24h: 0, refs: 0, ref_income: 0, rank: "🏅 Новичок I", place: 0 },
             leaderboard: []
         };
 
         if (rawData) {
-            try { 
-                const parsed = JSON.parse(decodeURIComponent(rawData));
-                appData = { ...appData, ...parsed };
-            } catch(e) { console.error("Ошибка парсинга JSON:", e); }
+            try {
+                appData = JSON.parse(decodeURIComponent(rawData));
+            } catch(e) {
+                console.error("Ошибка парсинга JSON из URL:", e);
+            }
         }
 
-        // 1. Отображение базовых данных
+        // 2. Выводим основные данные
         document.getElementById('currentRate').innerText = `${appData.rate} ₽`;
         document.getElementById('totalUsersCount').innerText = `👥 Всего в боте: ${appData.total_users}`;
         document.getElementById('completedExchangesText').innerText = `Уже ${appData.completed_exchanges.toLocaleString()} успешных обменов`;
 
-        // 2. Живой статус (показываем ТОЛЬКО если передана реальная строка)
-        if (appData.live_status && appData.live_status.trim() !== "") {
-            document.getElementById('liveStatusBox').style.display = 'flex';
-            document.getElementById('liveStatusText').innerText = appData.live_status;
-        } else {
-            document.getElementById('liveStatusBox').style.display = 'none';
-        }
-
-        // 3. Статистика юзера и имя
-        const stats = appData.user_stats || {
-            rank: "🏅 Новичок I",
-            exchanges: 0,
-            volume: 0,
-            refs: 0,
-            ref_income: 0,
-            volume_24h: 0,
-            place: 0
-        };
-
-        // Заполняем цифры
+        // 3. Выводим статистику юзера
+        const stats = appData.user_stats;
         document.getElementById('userRankBadge').innerText = stats.rank;
         document.getElementById('userExchanges').innerText = stats.exchanges;
         document.getElementById('userTurnover').innerText = `${stats.volume.toLocaleString()} ₽`;
         document.getElementById('userRefs').innerText = stats.refs;
         document.getElementById('refIncome').innerText = `${stats.ref_income.toLocaleString()} ₽`;
         document.getElementById('turnover24').innerText = `${stats.volume_24h.toLocaleString()} ₽`;
+
         if (document.getElementById('userPlaceText')) {
             document.getElementById('userPlaceText').innerText = `Твоё место в рейтинге: #${stats.place}`;
         }
 
-        // Достаем имя и аватар НАПРЯМУЮ из Telegram SDK
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
-            const user = window.Telegram.WebApp.initDataUnsafe.user;
-            if (user) {
-                const fullName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-                document.getElementById('userName').innerText = fullName || 'Пользователь';
-        
-                if (user.photo_url) {
-                    document.getElementById('userAvatar').innerHTML = `<img src="${user.photo_url}" class="avatar-img">`;
-                } else if (user.first_name) {
-                    document.getElementById('userAvatar').innerText = user.first_name[0].toUpperCase();
-                }
+        // 4. Подтягиваем Имя и Аватар из Telegram
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const user = tg.initDataUnsafe.user;
+            const name = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            document.getElementById('userName').innerText = name || 'Пользователь';
+    
+            if (user.photo_url) {
+                document.getElementById('userAvatar').innerHTML = `<img src="${user.photo_url}" class="avatar-img">`;
+            } else if (user.first_name) {
+                document.getElementById('userAvatar').innerText = user.first_name[0].toUpperCase();
             }
-        }   
-
-        function openSupport() {
-            tg.openTelegramLink('https://t.me/Babocha_nerd');
         }
 
         // 4. Лидерборд
