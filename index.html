@@ -453,11 +453,9 @@ setTimeout(loadProfile, 500);
         if (el) el.classList.add('active');
     };
 
-   // Находим кнопку создания заявки
 window.submitOrder = async function() {
     const tg = window.Telegram?.WebApp;
 
-    // 1. Находим поля ввода (проверяем все возможные варианты ID)
     const usdtInput = document.getElementById('usdtInput');
     const rubResult = document.getElementById('rubResult');
     const phoneEl = document.getElementById('phone') || document.getElementById('phoneInput');
@@ -472,7 +470,6 @@ window.submitOrder = async function() {
     const cardVal = cardEl ? cardEl.value.trim() : 'Не указана';
     const bankVal = bankEl ? bankEl.value.trim() : '';
 
-    // 2. Валидация обязательных полей
     if (!usdtVal || usdtVal === '0' || !phoneVal || !fullNameVal || !bankVal) {
         if (tg) {
             tg.showAlert('⚠️ Заполните Телефон, ФИО, Банк и сумму USDT!');
@@ -482,13 +479,11 @@ window.submitOrder = async function() {
         return;
     }
 
-    // 3. Данные пользователя из Telegram SDK
     const user = tg?.initDataUnsafe?.user || {};
     const userId = user.id || 'Неизвестен';
     const userName = user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Пользователь';
-    const userUsername = user.username ? `@${user.username}` : 'нет юзернейма';
+    const userUsername = user.username ? `@${user.username}` : 'нет';
 
-    // 4. Текст заявки для админа
     const messageText = 
         `📥 <b>НОВАЯ ЗАЯВКА НА ОБМЕН</b>\n\n` +
         `👤 <b>Клиент:</b> ${userName} (${userUsername})\n` +
@@ -501,9 +496,9 @@ window.submitOrder = async function() {
         `🏦 <b>Банк:</b> ${bankVal}\n` +
         `💳 <b>Карта:</b> <code>${cardVal}</code>`;
 
-    // 5. Конфиг бота (УКАЖИ СВОИ ДАННЫЕ)
-    const BOT_TOKEN = "8662507236:AAGfDSPV7-IrgoB79cwyi4FS1T34bISUP8A";
-    const ADMIN_ID = "5117202804";
+    // ❗️ ВСТАВЬ СВОИ ДАННЫЕ СУДА ❗️
+    const BOT_TOKEN = "ТВОЙ_НАСТОЯЩИЙ_ТОКЕН"; 
+    const ADMIN_ID = 123456789; // Твой ID цифрами (без кавычек)
 
     const btn = document.getElementById('sendBtn');
     if (btn) {
@@ -516,13 +511,16 @@ window.submitOrder = async function() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                chat_id: ADMIN_ID,
+                chat_id: Number(ADMIN_ID),
                 text: messageText,
                 parse_mode: 'HTML'
             })
         });
 
-        if (response.ok) {
+        const resultData = await response.json();
+        console.log("Ответ от Telegram API:", resultData);
+
+        if (response.ok && resultData.ok) {
             if (tg) {
                 tg.showAlert('✅ Заявка успешно создана! Оператор свяжется с вами.', () => {
                     tg.close();
@@ -531,12 +529,13 @@ window.submitOrder = async function() {
                 alert('✅ Заявка успешно создана!');
             }
         } else {
-            throw new Error('Ошибка Telegram API');
+            console.error("Telegram API Error:", resultData);
+            throw new Error(resultData.description || ' Ошибка API Telegram');
         }
     } catch (error) {
-        console.error('Ошибка:', error);
+        console.error('ПОДРОБНАЯ ОШИБКА:', error);
         if (tg) {
-            tg.showAlert('❌ Не удалось отправить заявку. Проверьте данные бота.');
+            tg.showAlert(`❌ Не удалось отправить: ${error.message || error}`);
         } else {
             alert('❌ Ошибка отправки заявки.');
         }
