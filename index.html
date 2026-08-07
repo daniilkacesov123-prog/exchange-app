@@ -352,11 +352,18 @@
 
     </div>
 
-    <script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // 1. Дефолтные данные (на случай пустых параметров)
+    // Безопасное присвоение текста (чтобы скрипт НЕ падал, если ID нет в HTML)
+    function setSafe(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+    }
+
+    // 1. Дефолтные данные
     let appData = {
         rate: 98.50,
         total_users: 0,
@@ -366,43 +373,44 @@
         leaderboard: []
     };
 
-    // Парсим URL если переданы данные
+    // Парсим URL если есть ?data=
     const urlParams = new URLSearchParams(window.location.search);
     const rawData = urlParams.get('data');
     if (rawData) {
         try {
             appData = JSON.parse(decodeURIComponent(rawData));
         } catch(e) {
-            console.error("Ошибка парсинга данных:", e);
+            console.error("Ошибка парсинга:", e);
         }
     }
 
-    // 2. Отображаем глобальные счетчики и курс
-    if (document.getElementById('currentRate')) document.getElementById('currentRate').innerText = `${appData.rate} ₽`;
-    if (document.getElementById('totalUsersCount')) document.getElementById('totalUsersCount').innerText = `👥 Всего в боте: ${appData.total_users}`;
-    if (document.getElementById('completedExchangesText')) document.getElementById('completedExchangesText').innerText = `Уже ${appData.completed_exchanges.toLocaleString()} успешных обменов`;
+    // 2. Заполняем данные
+    setSafe('currentRate', `${appData.rate} ₽`);
+    setSafe('totalUsersCount', `👥 Всего в боте: ${appData.total_users}`);
+    setSafe('completedExchangesText', `Уже ${appData.completed_exchanges.toLocaleString()} успешных обменов`);
 
-    // 3. Выводим Живой статус (если есть)
+    // Бегущая строка
     if (appData.live_status && appData.live_status.trim() !== "") {
-        if (document.getElementById('liveStatusBox')) document.getElementById('liveStatusBox').style.display = 'flex';
-        if (document.getElementById('liveStatusText')) document.getElementById('liveStatusText').innerText = appData.live_status;
+        const statusBox = document.getElementById('liveStatusBox');
+        if (statusBox) statusBox.style.display = 'flex';
+        setSafe('liveStatusText', appData.live_status);
     }
 
-    // 4. Заполняем Профиль (Статистику)
+    // Профиль
     const stats = appData.user_stats || {};
-    if (document.getElementById('userRankBadge')) document.getElementById('userRankBadge').innerText = stats.rank || "🏅 Новичок I";
-    if (document.getElementById('userExchanges')) document.getElementById('userExchanges').innerText = stats.exchanges || 0;
-    if (document.getElementById('userTurnover')) document.getElementById('userTurnover').innerText = `${(stats.volume || 0).toLocaleString()} ₽`;
-    if (document.getElementById('userRefs')) document.getElementById('userRefs').innerText = stats.refs || 0;
-    if (document.getElementById('refIncome')) document.getElementById('refIncome').innerText = `${(stats.ref_income || 0).toLocaleString()} ₽`;
-    if (document.getElementById('turnover24')) document.getElementById('turnover24').innerText = `${(stats.volume_24h || 0).toLocaleString()} ₽`;
-    if (document.getElementById('userPlaceText')) document.getElementById('userPlaceText').innerText = `Твоё место в рейтинге: #${stats.place || 0}`;
+    setSafe('userRankBadge', stats.rank || "🏅 Новичок I");
+    setSafe('userExchanges', stats.exchanges || 0);
+    setSafe('userTurnover', `${(stats.volume || 0).toLocaleString()} ₽`);
+    setSafe('userRefs', stats.refs || 0);
+    setSafe('refIncome', `${(stats.ref_income || 0).toLocaleString()} ₽`);
+    setSafe('turnover24', `${(stats.volume_24h || 0).toLocaleString()} ₽`);
+    setSafe('userPlaceText', `Твоё место в рейтинге: #${stats.place || 0}`);
 
-    // 5. Имя и Аватар из Telegram
+    // Имя и Аватар из Telegram
     if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         const u = tg.initDataUnsafe.user;
         const fullName = u.first_name + (u.last_name ? ' ' + u.last_name : '');
-        if (document.getElementById('userName')) document.getElementById('userName').innerText = fullName || 'Пользователь';
+        setSafe('userName', fullName || 'Пользователь');
 
         const avatarEl = document.getElementById('userAvatar');
         if (avatarEl) {
@@ -414,53 +422,7 @@
         }
     }
 
-    // 6. Отрисовка ТАБЛИЦЫ ЛИДЕРОВ
-    const leaderContainer = document.getElementById('leaderboardList');
-    if (leaderContainer) {
-        leaderContainer.innerHTML = '';
-        if (!appData.leaderboard || appData.leaderboard.length === 0) {
-            leaderContainer.innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 20px;">Список лидеров пока пуст</div>`;
-        } else {
-            appData.leaderboard.forEach(item => {
-                let medal = `#${item.place}`;
-                let topClass = '';
-                if (item.place === 1) { medal = '🥇'; topClass = 'top-1'; }
-                else if (item.place === 2) { medal = '🥈'; topClass = 'top-2'; }
-                else if (item.place === 3) { medal = '🥉'; topClass = 'top-3'; }
-
-                leaderContainer.innerHTML += `
-                    <div class="leader-item ${topClass}">
-                        <div class="leader-rank">${medal}</div>
-                        <div class="leader-info">
-                            <div class="leader-name">${item.name}</div>
-                            <div class="leader-badge">${item.rank}</div>
-                        </div>
-                        <div class="leader-vol">${(item.volume || 0).toLocaleString()} ₽</div>
-                    </div>
-                `;
-            });
-        }
-    }
-
-    // 7. Переключение Табов (Вкладок)
-    function switchTab(tabName, el) {
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-        
-        const targetTab = document.getElementById(`tab-${tabName}`);
-        if (targetTab) targetTab.classList.add('active');
-        if (el) el.classList.add('active');
-    }
-
-    // 8. Копирование реф-ссылки
-    function copyRefLink() {
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const link = `https://t.me/G00D_EXCHBot?start=ref_${tg.initDataUnsafe.user.id}`;
-            navigator.clipboard.writeText(link).then(() => tg.showAlert('✅ Ссылка скопирована!'));
-        }
-    }
-
-    // 9. Калькулятор USDT -> RUB
+    // 3. Калькулятор USDT -> RUB
     const usdtInput = document.getElementById('usdtInput');
     const rubResult = document.getElementById('rubResult');
     if (usdtInput && rubResult) {
@@ -470,15 +432,30 @@
         });
     }
 
-    // 10. Кнопка «Подать заявку»
+    // 4. Переключение табов
+    window.switchTab = function(tabName, el) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        
+        const targetTab = document.getElementById(`tab-${tabName}`);
+        if (targetTab) targetTab.classList.add('active');
+        if (el) el.classList.add('active');
+    };
+
+    // 5. Кнопка отправки заявки
     const sendBtn = document.getElementById('sendBtn');
     if (sendBtn) {
-        sendBtn.addEventListener('click', () => {
+        sendBtn.onclick = function() {
             const usdt = usdtInput ? usdtInput.value.trim() : '';
-            const phone = document.getElementById('phone').value.trim();
-            const fullName = document.getElementById('fullName').value.trim();
-            const cardNumber = document.getElementById('cardNumber').value.trim();
-            const bankName = document.getElementById('bankName').value.trim();
+            const phoneEl = document.getElementById('phone');
+            const nameEl = document.getElementById('fullName');
+            const cardEl = document.getElementById('cardNumber');
+            const bankEl = document.getElementById('bankName');
+
+            const phone = phoneEl ? phoneEl.value.trim() : '';
+            const fullName = nameEl ? nameEl.value.trim() : '';
+            const cardNumber = cardEl ? cardEl.value.trim() : '';
+            const bankName = bankEl ? bankEl.value.trim() : '';
 
             if (!usdt || !phone || !fullName || !bankName) {
                 tg.showAlert('Заполните Телефон, ФИО, Банк и сумму USDT!');
@@ -496,8 +473,8 @@
             };
 
             tg.sendData(JSON.stringify(payload));
-        });
+        };
     }
-</script>
+    </script>
 </body>
 </html>
