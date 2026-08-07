@@ -453,39 +453,50 @@ setTimeout(loadProfile, 500);
         if (el) el.classList.add('active');
     };
 
-    // 5. Кнопка отправки заявки
     const sendBtn = document.getElementById('sendBtn');
-    if (sendBtn) {
-        sendBtn.onclick = function() {
-            const usdt = usdtInput ? usdtInput.value.trim() : '';
-            const phoneEl = document.getElementById('phone');
-            const nameEl = document.getElementById('fullName');
-            const cardEl = document.getElementById('cardNumber');
-            const bankEl = document.getElementById('bankName');
+if (sendBtn) {
+    sendBtn.onclick = async function() {
+        const usdt = usdtInput ? usdtInput.value.trim() : '';
+        const phone = document.getElementById('phone') ? document.getElementById('phone').value.trim() : '';
+        const fullName = document.getElementById('fullName') ? document.getElementById('fullName').value.trim() : '';
+        const cardNumber = document.getElementById('cardNumber') ? document.getElementById('cardNumber').value.trim() : '';
+        const bankName = document.getElementById('bankName') ? document.getElementById('bankName').value.trim() : '';
 
-            const phone = phoneEl ? phoneEl.value.trim() : '';
-            const fullName = nameEl ? nameEl.value.trim() : '';
-            const cardNumber = cardEl ? cardEl.value.trim() : '';
-            const bankName = bankEl ? bankEl.value.trim() : '';
+        if (!usdt || !phone || !fullName || !bankName) {
+            tg.showAlert('Заполните Телефон, ФИО, Банк и сумму USDT!');
+            return;
+        }
 
-            if (!usdt || !phone || !fullName || !bankName) {
-                tg.showAlert('Заполните Телефон, ФИО, Банк и сумму USDT!');
-                return;
-            }
+        sendBtn.disabled = true;
+        sendBtn.innerText = 'Отправка...';
 
-            const payload = {
-                usdt: usdt,
-                phone: phone,
-                fullName: fullName,
-                cardNumber: cardNumber || "Не указана",
-                bankName: bankName,
-                rub: (parseFloat(usdt) * appData.rate).toFixed(2),
-                rate: appData.rate
-            };
-
-            tg.sendData(JSON.stringify(payload));
+        const payload = {
+            usdt: usdt,
+            phone: phone,
+            fullName: fullName,
+            cardNumber: cardNumber || "Не указана",
+            bankName: bankName,
+            rub: (parseFloat(usdt) * appData.rate).toFixed(2),
+            rate: appData.rate,
+            initData: tg.initData // Передаем данные авторизации Telegram
         };
-    }
+
+        try {
+            // Посылаем запрос напрямую в ваш бот/сервер или закрываем окно
+            if (tg.sendData) {
+                tg.sendData(JSON.stringify(payload));
+            }
+            
+            tg.showAlert('Заявка успешно создана!');
+            tg.close();
+        } catch (e) {
+            console.error(e);
+            tg.showAlert('Ошибка отправки заявки');
+            sendBtn.disabled = false;
+            sendBtn.innerText = 'Создать заявку';
+        }
+    };
+}
     </script>
 </body>
 </html>
