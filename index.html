@@ -457,8 +457,8 @@
             rubResult.innerText = `${(usdt * appData.rate).toFixed(2)} ₽`;
         });
 
-        // 7. Обработчик кнопки заявки для Inline WebApp
-        document.getElementById('sendBtn').addEventListener('click', async () => {
+        // 7. Обработчик кнопки заявки
+        document.getElementById('sendBtn').addEventListener('click', () => {
             const usdt = usdtInput.value.trim();
             const phone = document.getElementById('phone').value.trim();
             const fullName = document.getElementById('fullName').value.trim();
@@ -470,37 +470,19 @@
                 return;
             }
 
-            const sendBtn = document.getElementById('sendBtn');
-            sendBtn.innerText = 'Отправка...';
-            sendBtn.disabled = true;
+            // Формируем payload
+            const payload = {
+                usdt: usdt,
+                phone: phone,
+                fullName: fullName,
+                cardNumber: cardNumber || "Не указана",
+                bankName: bankName,
+                rub: (parseFloat(usdt) * appData.rate).toFixed(2),
+                rate: appData.rate
+            };
 
-            try {
-                // Отправляем данные на наш Python backend
-                const response = await fetch('/api/create_order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        initData: tg.initData, // Авторизация Telegram
-                        usdt, phone, fullName, bankName,
-                        cardNumber: cardNumber || "Не указана",
-                        rub: (parseFloat(usdt) * appData.rate).toFixed(2),
-                        rate: appData.rate
-                    })
-                });
-
-                if (response.ok) {
-                    tg.showAlert('✅ Заявка успешно создана!');
-                    tg.close();
-                } else {
-                    tg.showAlert('❌ Ошибка при отправке. Попробуйте еще раз.');
-                    sendBtn.innerText = 'Подать заявку';
-                    sendBtn.disabled = false;
-                }
-            } catch (e) {
-                tg.showAlert('❌ Ошибка сети!');
-                sendBtn.innerText = 'Подать заявку';
-                sendBtn.disabled = false;
-            }
+            // Отправляем прямо через Telegram API
+            tg.sendData(JSON.stringify(payload));
         });
     </script>
 </body>
