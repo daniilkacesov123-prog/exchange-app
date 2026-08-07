@@ -474,7 +474,7 @@ setTimeout(loadProfile, 500);
         if (el) el.classList.add('active');
     };
 
-window.submitOrder = async function() {
+window.submitOrder = function() {
     const tg = window.Telegram?.WebApp;
 
     const usdtInput = document.getElementById('usdtInput');
@@ -494,55 +494,24 @@ window.submitOrder = async function() {
         return;
     }
 
-    const user = tg?.initDataUnsafe?.user || {};
-    
-    // Рассчитываем итоговые рубли на основе курса на фронте
     const currentRate = window.appData?.rate || 98.50;
     const rubVal = (parseFloat(usdtVal) * currentRate).toFixed(2);
 
-    const btn = document.getElementById('sendBtn');
-    if (btn) {
-        btn.disabled = true;
-        btn.innerText = 'Отправка...';
-    }
+    // Пакуем данные в JSON
+    const payload = {
+        usdt: usdtVal,
+        rub: rubVal,
+        phone: phoneVal,
+        fullName: fullNameVal,
+        cardNumber: cardVal,
+        bankName: bankVal
+    };
 
-    try {
-        const response = await fetch('/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                usdt: usdtVal,
-                rub: rubVal,
-                phone: phoneVal,
-                fullName: fullNameVal,
-                cardNumber: cardVal,
-                bankName: bankVal,
-                user_id: user.id || 0,
-                user_name: user.first_name || 'Пользователь'
-            })
-        });
-
-        const resData = await response.json();
-
-        if (response.ok && resData.ok) {
-            if (tg) {
-                tg.showAlert('✅ Заявка успешно создана! Оператор свяжется с вами.', () => {
-                    tg.close();
-                });
-            } else {
-                alert('✅ Заявка успешно создана!');
-            }
-        } else {
-            throw new Error(resData.error || 'Ошибка при создании заявки');
-        }
-    } catch (error) {
-        console.error('Ошибка:', error);
-        if (tg) tg.showAlert(`❌ Не удалось отправить заявку: ${error.message}`);
-    } finally {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerText = 'Создать заявку';
-        }
+    // Отправляем через Telegram SDK (работает мгновенно из Reply-кнопки!)
+    if (tg) {
+        tg.sendData(JSON.stringify(payload));
+    } else {
+        alert('Данные готовы к отправке: ' + JSON.stringify(payload));
     }
 };
     // Функция поддержки
