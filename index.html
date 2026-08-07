@@ -1,524 +1,244 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
-
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>G00D_EXCH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G00D Exchange - Личный кабинет</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        .action-btn {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    color: #ffffff;
-    border: none;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
-}
-
-.action-btn:active {
-    transform: scale(0.98);
-    opacity: 0.9;
-}
-
         :root {
-            --bg-color: #07090e;
-            --card-bg: rgba(18, 24, 38, 0.75);
-            --card-border: rgba(88, 101, 242, 0.25);
-            --input-bg: #111622;
-            --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
-            --gold-text: #e5c158;
-            --text-main: #ffffff;
-            --text-muted: #8b9bb4;
-            --green-status: #10b981;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #6366f1;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
         body {
+            margin: 0;
+            padding: 16px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 60%);
-            color: var(--text-main);
-            margin: 0; padding: 12px;
+            color: var(--text-color);
             box-sizing: border-box;
-            user-select: none;
-            min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* 🌌 Космос 🌌 */
-        body::before, body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: -1;
-        }
-        body::before {
-            background-image: 
-                radial-gradient(1.5px 1.5px at 10px 30px, rgba(255, 255, 255, 0.8), transparent),
-                radial-gradient(2px 2px at 90px 40px, rgba(255, 255, 255, 0.9), transparent),
-                radial-gradient(1.5px 1.5px at 210px 100px, rgba(255, 255, 255, 0.7), transparent),
-                radial-gradient(2px 2px at 290px 40px, rgba(255, 255, 255, 0.85), transparent),
-                radial-gradient(2px 2px at 410px 90px, rgba(212, 175, 55, 0.8), transparent);
-            background-repeat: repeat; background-size: 400px 300px; opacity: 0.7;
-            animation: starsTwinkle 4s ease-in-out infinite alternate;
-        }
-        body::after {
-            background-image: 
-                radial-gradient(2.5px 2.5px at 70px 90px, rgba(255, 255, 255, 0.9), transparent),
-                radial-gradient(3px 3px at 200px 270px, rgba(165, 180, 252, 0.85), transparent),
-                radial-gradient(2.5px 2.5px at 320px 70px, rgba(253, 224, 71, 0.8), transparent);
-            background-repeat: repeat; background-size: 350px 350px; opacity: 0.8;
-            animation: starsTwinkle 6s ease-in-out infinite alternate-reverse;
-        }
-        @keyframes starsTwinkle {
-            0% { opacity: 0.3; transform: scale(0.98); }
-            50% { opacity: 0.85; }
-            100% { opacity: 0.4; transform: scale(1.02); }
+        /* Навигация (Табы) */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--card-bg);
+            padding: 6px;
+            border-radius: 12px;
+            margin-bottom: 20px;
         }
 
-        .container { max-width: 440px; margin: 0 auto; }
-
-        .brand-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px 12px; }
-        .brand-title {
-            font-size: 22px; font-weight: 900; letter-spacing: 1px;
-            background: var(--gold-gradient);
-            -webkit-background-clip: text; background-clip: text;
-            -webkit-text-fill-color: transparent; text-transform: uppercase;
-        }
-        .brand-badge { font-size: 11px; color: var(--text-muted); font-weight: 500; }
-
-        .top-nav {
-            display: flex; background: rgba(15, 20, 31, 0.85); border-radius: 16px;
-            padding: 4px; margin-bottom: 16px; border: 1px solid var(--card-border);
-            gap: 2px; backdrop-filter: blur(10px);
-        }
-        .nav-item {
-            flex: 1; text-align: center; padding: 8px 1px; border-radius: 12px;
-            font-size: 9px; color: var(--text-muted); cursor: pointer; transition: all 0.25s ease;
-            display: flex; flex-direction: column; align-items: center; gap: 3px;
-        }
-        .nav-item svg { width: 16px; height: 16px; fill: currentColor; }
-        .nav-item.active {
-            background: linear-gradient(135deg, #3730a3 0%, #5b21b6 100%);
-            color: #ffffff; font-weight: 600; box-shadow: 0 4px 12px rgba(91, 33, 182, 0.4);
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* Профиль */
-        .main-card {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 24px; padding: 20px 16px; text-align: center; margin-bottom: 14px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
-        }
-        .avatar-wrapper {
-            width: 76px; height: 76px; margin: 0 auto 12px; border-radius: 50%; padding: 3px;
-            background: var(--gold-gradient); box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
-        }
-        .avatar-img {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-            background: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 32px;
-        }
-        .user-name { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
-        .badge-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
-        .badge {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
-            padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #f1f5f9; font-weight: 600;
-        }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .stat-box {
-            background: var(--input-bg); border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px; padding: 12px 14px; text-align: left;
-        }
-        .stat-val { font-size: 16px; font-weight: 800; margin-bottom: 2px; color: #ffffff; }
-        .stat-lbl { font-size: 11px; color: var(--text-muted); }
-
-        /* Динамический статус */
-        .live-status {
-            background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25);
-            border-radius: 16px; padding: 12px 16px; margin-bottom: 14px;
-            display: flex; align-items: center; font-size: 12px; gap: 8px; color: #e2e8f0;
-        }
-        .status-dot {
-            width: 8px; height: 8px; background-color: var(--green-status);
-            border-radius: 50%; box-shadow: 0 0 10px var(--green-status);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-        /* Поддержка */
-        .support-card {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 18px; padding: 16px; display: flex; align-items: center; gap: 14px;
-            margin-bottom: 14px; cursor: pointer;
-        }
-        .support-icon {
-            width: 44px; height: 44px; background: var(--input-bg); border-radius: 14px;
-            display: flex; align-items: center; justify-content: center; color: #818cf8; font-size: 20px;
-            border: 1px solid var(--card-border);
+        .tab-btn.active {
+            background: var(--accent-color);
+            color: #fff;
         }
 
-        .footer-counter {
-            text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 16px;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
+        /* Контент табов */
+        .tab-content {
+            display: none;
         }
 
-        /* Лидерборд */
-        .leader-item {
-            background: var(--input-bg); border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 14px; padding: 12px 14px; margin-bottom: 8px;
-            display: flex; align-items: center; justify-content: space-between;
+        .tab-content.active {
+            display: block;
         }
-        .leader-item.top-1 { border-color: rgba(212, 175, 55, 0.5); background: rgba(212, 175, 55, 0.08); }
-        .leader-item.top-2 { border-color: rgba(148, 163, 184, 0.5); background: rgba(148, 163, 184, 0.08); }
-        .leader-item.top-3 { border-color: rgba(180, 83, 9, 0.5); background: rgba(180, 83, 9, 0.08); }
-        .leader-rank { font-weight: 800; font-size: 14px; width: 30px; }
-        .leader-info { flex: 1; text-align: left; padding-left: 8px; }
-        .leader-name { font-size: 14px; font-weight: 700; color: #ffffff; }
-        .leader-badge { font-size: 10px; color: var(--text-muted); }
-        .leader-vol { font-size: 13px; font-weight: 800; color: var(--gold-text); }
 
-        /* Формы */
-        .section-card {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 20px; padding: 16px; margin-bottom: 14px;
+        /* Карточки */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
-        input {
-            width: 100%; padding: 14px; background-color: var(--input-bg);
-            border: 1px solid var(--card-border); border-radius: 12px; color: #ffffff;
-            font-size: 15px; box-sizing: border-box; outline: none;
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .btn-submit {
-            width: 100%; background: var(--accent-gradient); color: white; border: none;
-            padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer;
-            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        /* Кнопка скопировать */
+        .copy-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
 
-        <div class="brand-header">
-            <div class="brand-title">G00D_EXCH</div>
-            <div class="brand-badge">24/7</div>
-        </div>
-
-        <div class="top-nav">
-            <div class="nav-item active" onclick="switchTab('main', this)">
-                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg> Главная
-            </div>
-            <div class="nav-item" onclick="switchTab('exchange', this)">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg> Сделки
-            </div>
-            <div class="nav-item" onclick="switchTab('leaders', this)">
-                <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V18H8v2h8v-2h-3v-2.1c1.93-.35 3.46-1.85 3.91-3.76C19.32 11.83 21 9.9 21 7.5V7c0-1.1-.9-2-2-2z"/></svg> Лидеры
-            </div>
-            <div class="nav-item" onclick="switchTab('history', this)">
-                <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg> История
-            </div>
-            <div class="nav-item" onclick="switchTab('ref', this)">
-                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg> Рефералы
-            </div>
-        </div>
-
-        <!-- ================= Вкладка 1: Главная ================= -->
-        <div id="tab-main" class="tab-content active">
-            <div class="main-card">
-                <div class="avatar-wrapper">
-                    <div class="avatar-img" id="userAvatar">👤</div>
-                </div>
-                <div class="user-name" id="userName">Пользователь</div>
-
-                <div class="badge-container">
-                    <span class="badge" id="userRankBadge">🥉 Новичок I</span>
-                    <span class="badge" id="totalUsersCount">👥 Всего в боте: --</span>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-val" id="userExchanges">0</div>
-                        <div class="stat-lbl">🔄 Обмены</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-val" id="userTurnover">0 ₽</div>
-                        <div class="stat-lbl">📊 Оборот</div>
-                    </div>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-val" id="userRefs">0</div>
-                        <div class="stat-lbl">👥 Рефералы</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-val" id="refIncome">0 ₽</div>
-                        <div class="stat-lbl">💰 Реф. доход</div>
-                    </div>
-                </div>
-
-                <div class="stat-box">
-                    <div class="stat-val" id="turnover24">0 ₽</div>
-                    <div class="stat-lbl">⏱ Оборот за 24 часа</div>
-                </div>
-            </div>
-
-            <!-- Живая строка (показывается ТОЛЬКО если есть данные из базы) -->
-            <div class="live-status" id="liveStatusBox" style="display: none;">
-                <div class="status-dot"></div>
-                <div><b>ПОСЛЕДНИЙ ОБМЕН</b> <span id="liveStatusText"></span></div>
-            </div>
-
-            <div class="support-card" onclick="openSupport()">
-                <div class="support-icon">💬</div>
-                <div>
-                    <div style="font-weight: 700; font-size: 15px;">Поддержка</div>
-                    <div style="font-size: 12px; color: var(--text-muted);">Связаться с нами</div>
-                </div>
-            </div>
-
-            <!-- Счётчик обменов подтягивается динамически -->
-            <div class="footer-counter">
-                <span style="color: var(--green-status);">✔</span> <span id="completedExchangesText">Уже 0 успешных обменов</span>
-            </div>
-        </div>
-
-        <!-- ================= Вкладка 2: Сделки ================= -->
-        <div id="tab-exchange" class="tab-content">
-            <div class="section-card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <span style="color: var(--text-muted); font-size: 13px;">Курс USDT:</span>
-                    <span style="color: var(--green-status); font-weight: 700; font-size: 16px;" id="currentRate">-- ₽</span>
-                </div>
-                <div class="form-group">
-                    <label>Отдаёте (USDT)</label>
-                    <input type="number" id="usdtInput" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Получаете (Рубли)</label>
-                    <div style="background: var(--input-bg); padding: 14px; border-radius: 12px; font-size: 18px; font-weight: 700; color: #818cf8; text-align: right; border: 1px solid var(--card-border);" id="rubResult">0.00 ₽</div>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <div style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">📋 Реквизиты получателя</div>
-                
-                <div class="form-group">
-                    <label>Телефон</label>
-                    <input type="tel" id="phone" placeholder="+7, 8 или 9...">
-                </div>
-
-                <div class="form-group">
-                    <label>ФИО</label>
-                    <input type="text" id="fullName" placeholder="Иван Иванов">
-                </div>
-
-                <div class="form-group">
-                    <label>Карта (необязательно)</label>
-                    <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000">
-                </div>
-
-                <div class="form-group">
-                    <label>Банк</label>
-                    <input type="text" id="bankName" placeholder="Сбербанк">
-                </div>
-            </div>
-
-            <!-- Единственная кнопка отправки на всём сайте -->
-            <button type="button" class="action-btn" id="sendBtn" onclick="submitOrder()">
-            Создать заявку
-            </button>
-        </div>
-
-        <!-- ================= Вкладка 3: Лидерборд ================= -->
-        <div id="tab-leaders" class="tab-content">
-            <div class="section-card" style="margin-bottom: 10px;">
-                <div style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">🏆 Таблица лидеров</div>
-                <div style="font-size: 12px; color: var(--text-muted);" id="userPlaceText">Твоё место в рейтинге: --</div>
-            </div>
-            <div id="leaderboardList"></div>
-        </div>
-
-        <!-- ================= Вкладка 4: История ================= -->
-        <div id="tab-history" class="tab-content">
-            <div class="section-card" style="text-align: center; padding: 40px 20px;">
-                <div style="font-size: 40px; margin-bottom: 10px;">📂</div>
-                <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">История обменов</div>
-                <div style="color: var(--text-muted); font-size: 13px;">Пока нет активных заявок</div>
-            </div>
-        </div>
-
-        <!-- ================= Вкладка 5: Рефералы ================= -->
-        <div id="tab-ref" class="tab-content">
-            <div class="section-card">
-                <div style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">🤝 Реферальная система</div>
-                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
-                    Приглашайте друзей и получайте <b style="color: var(--green-status);">0.5%</b> от каждого их обмена!
-                </div>
-                <button class="btn-submit" onclick="copyRefLink()">📋 Скопировать реф. ссылку</button>
-            </div>
-        </div>
-
+    <!-- Навигационные вкладки (без Сделки!) -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('profile')">👤 Профиль</button>
+        <button class="tab-btn" onclick="switchTab('history')">📜 История</button>
+        <button class="tab-btn" onclick="switchTab('leaders')">🏆 Лидеры</button>
+        <button class="tab-btn" onclick="switchTab('ref')">👥 Рефка</button>
     </div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+    <!-- 1. ПРОФИЛЬ -->
+    <div id="tab-profile" class="tab-content active">
+        <div class="card">
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">U</div>
+                <div>
+                    <div style="font-weight: bold;" id="userName">Загрузка...</div>
+                    <div style="font-size: 12px; color: var(--text-muted);" id="userId">ID: ---</div>
+                </div>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Всего обменов</div>
+                    <div class="stat-value" id="totalExchanges">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Оборот</div>
+                    <div class="stat-value" id="totalVolume">0 ₽</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    // Безопасное присвоение текста (чтобы скрипт НЕ падал, если ID нет в HTML)
-    function setSafe(id, text) {
-        const el = document.getElementById(id);
-        if (el) el.innerText = text;
-    }
+    <!-- 2. ИСТОРИЯ -->
+    <div id="tab-history" class="tab-content">
+        <div class="card">
+            <h3 style="margin-top:0;">История обменов</h3>
+            <div id="historyList" style="color: var(--text-muted); font-size: 14px;">
+                У вас пока нет завершенных обменов.
+            </div>
+        </div>
+    </div>
 
-    // 1. Дефолтные данные
-    let appData = {
-        rate: 98.50,
-        total_users: 0,
-        completed_exchanges: 0,
-        live_status: "",
-        user_stats: { exchanges: 0, volume: 0, volume_24h: 0, refs: 0, ref_income: 0, rank: "🏅 Новичок I", place: 0 },
-        leaderboard: []
-    };
+    <!-- 3. ЛИДЕРЫ -->
+    <div id="tab-leaders" class="tab-content">
+        <div class="card">
+            <h3 style="margin-top:0;">Топ трейдеров 🏆</h3>
+            <div id="leadersList" style="font-size: 14px;">
+                1. @babocha — 500,000 ₽<br>
+                2. @crypto_king — 320,000 ₽<br>
+                3. @trader777 — 150,000 ₽
+            </div>
+        </div>
+    </div>
 
-    // Парсим URL если есть ?data=
-    const urlParams = new URLSearchParams(window.location.search);
-    const rawData = urlParams.get('data');
-    if (rawData) {
+    <!-- 4. РЕФЕРАЛЫ -->
+    <div id="tab-ref" class="tab-content">
+        <div class="card">
+            <h3 style="margin-top:0;">Реферальная программа</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Получайте 0.5% от суммы каждого обмена ваших друзей!</p>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Приглашено</div>
+                    <div class="stat-value" id="refCount">0 чел.</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Заработано</div>
+                    <div class="stat-value" id="refEarned">0 ₽</div>
+                </div>
+            </div>
+            <button class="copy-btn" onclick="copyRefLink()">Скопировать реф. ссылку</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // Парсинг данных из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        let appData = {};
         try {
-            appData = JSON.parse(decodeURIComponent(rawData));
-        } catch(e) {
-            console.error("Ошибка парсинга:", e);
+            const rawData = urlParams.get('data');
+            if (rawData) appData = JSON.parse(decodeURIComponent(rawData));
+        } catch(e) { console.error(e); }
+
+        // Заполнение данных юзера
+        const user = tg.initDataUnsafe?.user || {};
+        document.getElementById('userName').innerText = user.first_name ? `${user.first_name} ${user.last_name || ''}` : 'Пользователь';
+        document.getElementById('userId').innerText = `ID: ${user.id || 'Неизвестен'}`;
+        document.getElementById('userAvatar').innerText = (user.first_name || 'U')[0].toUpperCase();
+
+        if (appData.user_stats) {
+            document.getElementById('totalExchanges').innerText = appData.user_stats.exchanges || 0;
+            document.getElementById('totalVolume').innerText = `${appData.user_stats.volume || 0} ₽`;
+            document.getElementById('refCount').innerText = `${appData.user_stats.refs || 0} чел.`;
+            document.getElementById('refEarned').innerText = `${appData.user_stats.ref_income || 0} ₽`;
         }
-    }
 
-    // 2. Заполняем данные
-    setSafe('currentRate', `${appData.rate} ₽`);
-    setSafe('totalUsersCount', `👥 Всего в боте: ${appData.total_users}`);
-    setSafe('completedExchangesText', `Уже ${appData.completed_exchanges.toLocaleString()} успешных обменов`);
+        // Переключение табов
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-    // Бегущая строка
-    if (appData.live_status && appData.live_status.trim() !== "") {
-        const statusBox = document.getElementById('liveStatusBox');
-        if (statusBox) statusBox.style.display = 'flex';
-        setSafe('liveStatusText', appData.live_status);
-    }
-
-    // Профиль
-    const stats = appData.user_stats || {};
-    setSafe('userRankBadge', stats.rank || "🏅 Новичок I");
-    setSafe('userExchanges', stats.exchanges || 0);
-    setSafe('userTurnover', `${(stats.volume || 0).toLocaleString()} ₽`);
-    setSafe('userRefs', stats.refs || 0);
-    setSafe('refIncome', `${(stats.ref_income || 0).toLocaleString()} ₽`);
-    setSafe('turnover24', `${(stats.volume_24h || 0).toLocaleString()} ₽`);
-    setSafe('userPlaceText', `Твоё место в рейтинге: #${stats.place || 0}`);
-
-    // Имя и Аватар из Telegram (с задержкой для гарантии)
-        function loadProfile() {
-    const tg = window.Telegram && window.Telegram.WebApp;
-    
-    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        const user = tg.initDataUnsafe.user;
-        
-        // 1. Имя пользователя
-        const fullName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-        setSafe('userName', fullName || 'Babocha');
-
-        // 2. Аватарка (первая буква если нет фото)
-        const avatarEl = document.getElementById('userAvatar');
-        if (avatarEl) {
-            if (user.photo_url) {
-                avatarEl.innerHTML = `<img src="${user.photo_url}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-            } else if (user.first_name) {
-                avatarEl.innerHTML = `<div style="font-size: 28px; font-weight: bold; color: #fff;">${user.first_name[0].toUpperCase()}</div>`;
-            }
+            event.currentTarget.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
         }
-    }
-}
 
-// Запускаем подгрузку профиля
-loadProfile();
-setTimeout(loadProfile, 500);
-
-    // 3. Калькулятор USDT -> RUB
-    const usdtInput = document.getElementById('usdtInput');
-    const rubResult = document.getElementById('rubResult');
-    if (usdtInput && rubResult) {
-        usdtInput.addEventListener('input', () => {
-            const val = parseFloat(usdtInput.value) || 0;
-            rubResult.innerText = `${(val * appData.rate).toFixed(2)} ₽`;
-        });
-    }
-
-    // 4. Переключение табов
-    window.switchTab = function(tabName, el) {
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-        
-        const targetTab = document.getElementById(`tab-${tabName}`);
-        if (targetTab) targetTab.classList.add('active');
-        if (el) el.classList.add('active');
-    };
-
-window.submitOrder = function() {
-    const tg = window.Telegram?.WebApp;
-
-    const usdtInput = document.getElementById('usdtInput');
-    const phoneEl = document.getElementById('phone') || document.getElementById('phoneInput');
-    const fullNameEl = document.getElementById('fullName') || document.getElementById('fullNameInput');
-    const cardEl = document.getElementById('cardNumber') || document.getElementById('cardInput');
-    const bankEl = document.getElementById('bankName') || document.getElementById('bankInput');
-
-    const usdtVal = usdtInput ? usdtInput.value.trim() : '0';
-    const phoneVal = phoneEl ? phoneEl.value.trim() : '';
-    const fullNameVal = fullNameEl ? fullNameEl.value.trim() : '';
-    const cardVal = cardEl ? cardEl.value.trim() : 'Не указана';
-    const bankVal = bankEl ? bankEl.value.trim() : '';
-
-    if (!usdtVal || usdtVal === '0' || !phoneVal || !fullNameVal || !bankVal) {
-        if (tg) tg.showAlert('⚠️ Заполните Телефон, ФИО, Банк и сумму USDT!');
-        return;
-    }
-
-    const currentRate = window.appData?.rate || 98.50;
-    const rubVal = (parseFloat(usdtVal) * currentRate).toFixed(2);
-
-    // Пакуем данные в JSON
-    const payload = {
-        usdt: usdtVal,
-        rub: rubVal,
-        phone: phoneVal,
-        fullName: fullNameVal,
-        cardNumber: cardVal,
-        bankName: bankVal
-    };
-
-    // Отправляем через Telegram SDK (работает мгновенно из Reply-кнопки!)
-    if (tg) {
-        tg.sendData(JSON.stringify(payload));
-    } else {
-        alert('Данные готовы к отправке: ' + JSON.stringify(payload));
-    }
-};
-    // Функция поддержки
-window.openSupport = function() {
-    tg.openTelegramLink('https://t.me/G00D_EXCHBot'); // замой на username админа/поддержки
-};
-
+        function copyRefLink() {
+            const link = `https://t.me/G00D_EXCHBot?start=${user.id || 0}`;
+            navigator.clipboard.writeText(link);
+            tg.showAlert('✅ Реферальная ссылка скопирована!');
+        }
     </script>
 </body>
 </html>

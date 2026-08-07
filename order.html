@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать заявку</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #6366f1;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: #0f172a;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .result-box {
+            background: var(--input-bg);
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4ade80;
+            text-align: right;
+            margin-bottom: 12px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h3 style="margin-top: 0; margin-bottom: 16px;">💱 Оформление обмена</h3>
+        
+        <label class="label">ОТДАЕТЕ (USDT)</label>
+        <input type="number" id="usdtInput" placeholder="100" oninput="calculate()">
+
+        <label class="label">ПОЛУЧАЕТЕ (РУБЛИ)</label>
+        <div class="result-box" id="rubResult">0.00 ₽</div>
+
+        <label class="label">ТЕЛЕФОН (СБП)</label>
+        <input type="text" id="phoneInput" placeholder="+7 900 000 00 00">
+
+        <label class="label">ФИО ПОЛУЧАТЕЛЯ</label>
+        <input type="text" id="fullNameInput" placeholder="Иванов И. И.">
+
+        <label class="label">БАНК</label>
+        <input type="text" id="bankInput" placeholder="Сбербанк / Тинькофф">
+
+        <label class="label">НОМЕР КАРТЫ (НЕОБЯЗАТЕЛЬНО)</label>
+        <input type="text" id="cardInput" placeholder="0000 0000 0000 0000">
+
+        <button type="button" class="submit-btn" onclick="submitOrder()">Создать заявку</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // Парсинг курса
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentRate = 98.50;
+        try {
+            const rawData = urlParams.get('data');
+            if (rawData) {
+                const parsed = JSON.parse(decodeURIComponent(rawData));
+                if (parsed.rate) currentRate = parsed.rate;
+            }
+        } catch(e) {}
+
+        function calculate() {
+            const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
+            const rub = (usdt * currentRate).toFixed(2);
+            document.getElementById('rubResult').innerText = `${rub} ₽`;
+        }
+
+        function submitOrder() {
+            const usdt = document.getElementById('usdtInput').value.trim();
+            const phone = document.getElementById('phoneInput').value.trim();
+            const fullName = document.getElementById('fullNameInput').value.trim();
+            const bank = document.getElementById('bankInput').value.trim();
+            const card = document.getElementById('cardInput').value.trim() || 'Не указана';
+
+            if (!usdt || usdt === '0' || !phone || !fullName || !bank) {
+                tg.showAlert('⚠️ Заполните сумму USDT, Телефон, ФИО и Банк!');
+                return;
+            }
+
+            const rub = (parseFloat(usdt) * currentRate).toFixed(2);
+
+            const payload = {
+                usdt: usdt,
+                rub: rub,
+                phone: phone,
+                fullName: fullName,
+                bankName: bank,
+                cardNumber: card
+            };
+
+            // Отправляем данные напрямую в чат через tg.sendData (работает со 100% надежностью в Reply-кнопке)
+            tg.sendData(JSON.stringify(payload));
+        }
+    </script>
+</body>
+</html>
