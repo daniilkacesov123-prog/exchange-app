@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>G00D Exchange - Profile</title>
+    <title>G00D Exchange</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-dark: #0a0814;
-            --card-bg: rgba(22, 16, 42, 0.75);
-            --border-color: rgba(139, 92, 246, 0.2);
+            --bg-dark: #080612;
+            --card-bg: rgba(20, 15, 38, 0.75);
+            --border-purple: rgba(139, 92, 246, 0.25);
             --accent-purple: #8b5cf6;
-            --accent-glow: #a78bfa;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
         }
@@ -22,18 +21,35 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             user-select: none;
+            }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
-            padding: 16px;
-            overflow-x: hidden;
-            position: relative;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Центрируем контент на широких мониторах ПК */
         }
 
-        /* Канвас с анимированными звездами */
+        /* Растягиваем контейнер на весь экран, но с максимальной шириной для удобства чтении на ПК */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 800px; /* Чтобы на 4K мониторах блоки не растягивались в длинную тонкую нитку */
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
         #stars-canvas {
             position: fixed;
             top: 0;
@@ -49,26 +65,51 @@
             z-index: 1;
         }
 
-        /* Табы навигации */
+        /* 👑 ЗОЛОТОЙ ПЕРЕЛИВАЮЩИЙСЯ ЛОГОТИП */
+        .brand-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .gold-title {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: goldShine 4s linear infinite;
+            text-transform: uppercase;
+            filter: drop-shadow(0 2px 8px rgba(191, 149, 63, 0.4));
+        }
+
+        @keyframes goldShine {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* ТАБЫ */
         .tabs {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             background: var(--card-bg);
-            padding: 6px;
+            padding: 5px;
             border-radius: 16px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-purple);
             backdrop-filter: blur(12px);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 10px 4px;
+            padding: 10px 2px;
             border: none;
             background: transparent;
             color: var(--text-muted);
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -83,142 +124,196 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Космические Карточки */
+        /* КАРТОЧКИ */
         .card {
             background: var(--card-bg);
             border-radius: 20px;
             padding: 20px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-purple);
             backdrop-filter: blur(16px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             margin-bottom: 16px;
         }
 
-        /* Юзер Профиль */
-        .user-header {
+        /* 👤 ПРОФИЛЬ ПО ЦЕНТРУ */
+        .profile-center {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 16px;
+            text-align: center;
             margin-bottom: 20px;
         }
 
+        .avatar-glow-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
         .avatar {
-            width: 56px;
-            height: 56px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #a78bfa 0%, #6366f1 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
             color: #fff;
-            box-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 3px solid #fbf5b7; /* Золотая обводка */
+            box-shadow: 0 0 25px rgba(167, 139, 250, 0.6);
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .user-name {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 20px;
+            font-weight: 800;
             color: #fff;
         }
 
-        .user-id {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* Гриды статистики */
-        .grid-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .stat-card {
-            background: rgba(15, 11, 30, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 14px;
-            border-radius: 14px;
-        }
-
-        .stat-title {
-            font-size: 12px;
-            color: var(--text-muted);
-            text-transform: uppercase;
+        /* ЗВАНИЕ */
+        .user-badge {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid #a78bfa;
+            color: #c084fc;
             letter-spacing: 0.5px;
         }
 
-        .stat-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--accent-glow);
-            margin-top: 6px;
+        .user-id {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
 
-        /* Лидерборд */
+        /* СТАТИСТИКА */
+        .grid-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-card {
+            background: rgba(10, 8, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .stat-title {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-top: 4px;
+        }
+
+        /* КНОПКА ПОДДЕРЖКИ И РЕФКИ */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-support {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #f3f4f6;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        /* СПИСОК ТОП-50 */
+        .leader-scroll {
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
         .leader-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            background: rgba(10, 8, 20, 0.4);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
-        .leader-item:last-child { border-bottom: none; }
 
         .rank {
             font-weight: 800;
-            width: 28px;
-            color: var(--accent-glow);
+            width: 32px;
+            font-size: 14px;
         }
-
-        /* Кнопка рефки */
-        .purple-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-            color: #fff;
-            border: none;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            margin-top: 14px;
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
-            transition: all 0.2s ease;
-        }
-        .purple-btn:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
 
-    <!-- Фон: Анимированный космос со звездами -->
     <canvas id="stars-canvas"></canvas>
 
     <div class="container">
+        <!-- Золотой заголовок -->
+        <div class="brand-header">
+            <div class="gold-title">G00D_EXCH</div>
+        </div>
+
         <!-- Навигация -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('profile', event)">👤 Профиль</button>
             <button class="tab-btn" onclick="switchTab('history', event)">📜 История</button>
-            <button class="tab-btn" onclick="switchTab('leaders', event)">🏆 Лидеры</button>
+            <button class="tab-btn" onclick="switchTab('leaders', event)">🏆 Топ-50</button>
             <button class="tab-btn" onclick="switchTab('ref', event)">👥 Рефка</button>
         </div>
 
         <!-- 1. ПРОФИЛЬ -->
         <div id="tab-profile" class="tab-content active">
             <div class="card">
-                <div class="user-header">
-                    <div class="avatar" id="userAvatar">U</div>
-                    <div>
-                        <div class="user-name" id="userName">Загрузка...</div>
-                        <div class="user-id" id="userId">ID: ---</div>
+                <div class="profile-center">
+                    <div class="avatar-glow-wrapper">
+                        <div class="avatar" id="userAvatar">U</div>
                     </div>
+                    <div class="user-name" id="userName">Пользователь</div>
+                    <div class="user-badge" id="userRankBadge">🌱 Новичок</div>
+                    <div class="user-id" id="userId">ID: ---</div>
                 </div>
 
                 <div class="grid-stats">
                     <div class="stat-card">
-                        <div class="stat-title">Всего сделок</div>
+                        <div class="stat-title">Сделок</div>
                         <div class="stat-value" id="totalExchanges">0</div>
                     </div>
                     <div class="stat-card">
@@ -226,34 +321,30 @@
                         <div class="stat-value" id="totalVolume">0 ₽</div>
                     </div>
                 </div>
+
+                <!-- Кнопка Поддержки -->
+                <button class="btn btn-support" onclick="openSupport()" style="margin-top: 16px;">
+                    🎧 Написать в поддержку
+                </button>
             </div>
         </div>
 
         <!-- 2. ИСТОРИЯ -->
         <div id="tab-history" class="tab-content">
             <div class="card">
-                <h3 style="margin-bottom: 12px; font-size: 16px;">История обменов</h3>
-                <div id="historyList" style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px 0;">
+                <h3 style="margin-bottom: 12px; font-size: 15px;">Ваша история обменов</h3>
+                <div id="historyList" style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">
                     Завершенных сделок пока нет 🚀
                 </div>
             </div>
         </div>
 
-        <!-- 3. ЛИДЕРЫ -->
+        <!-- 3. ТОП-50 ТРЕЙДЕРОВ -->
         <div id="tab-leaders" class="tab-content">
             <div class="card">
-                <h3 style="margin-bottom: 16px; font-size: 16px;">Топ трейдеров 🏆</h3>
-                <div class="leader-item">
-                    <div><span class="rank">🥇</span> @babocha</div>
-                    <div style="font-weight: 600; color: #4ade80;">500 000 ₽</div>
-                </div>
-                <div class="leader-item">
-                    <div><span class="rank">🥈</span> @crypto_pro</div>
-                    <div style="font-weight: 600; color: #4ade80;">320 000 ₽</div>
-                </div>
-                <div class="leader-item">
-                    <div><span class="rank">🥉</span> @trader_777</div>
-                    <div style="font-weight: 600; color: #4ade80;">180 000 ₽</div>
+                <h3 style="margin-bottom: 14px; font-size: 15px;">Топ-50 Трейдеров 🏆</h3>
+                <div class="leader-scroll" id="top50List">
+                    <!-- Заполняется динамически из JS -->
                 </div>
             </div>
         </div>
@@ -261,33 +352,40 @@
         <!-- 4. РЕФЕРАЛЫ -->
         <div id="tab-ref" class="tab-content">
             <div class="card">
-                <h3 style="margin-bottom: 8px; font-size: 16px;">Реферальная система</h3>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-                    Зарабатывайте 0.5% от суммы каждого обмена приглашённых друзей!
+                <h3 style="margin-bottom: 8px; font-size: 15px;">Партнерская программа</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+                    Получайте 0.5% от суммы каждого обмена реферала!
                 </p>
 
                 <div class="grid-stats">
                     <div class="stat-card">
-                        <div class="stat-title">Рефералов</div>
-                        <div class="stat-value" id="refCount">0</div>
+                        <div class="stat-title">Приглашено</div>
+                        <div class="stat-value" id="refCount">0 чел.</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-title">Доход</div>
+                        <div class="stat-title">Заработано</div>
                         <div class="stat-value" id="refIncome">0 ₽</div>
                     </div>
                 </div>
 
-                <button class="purple-btn" onclick="copyRefLink()">Скопировать реф. ссылку</button>
+                <button class="btn btn-purple" onclick="copyRefLink()">📋 Скопировать реф. ссылку</button>
             </div>
         </div>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+        
 
-        // Парсим параметры из URL
+        const tg = window.Telegram.WebApp;
+tg.ready();
+
+// Разворачиваем на весь экран (для ПК и мобилок)
+if (tg.requestFullscreen) {
+    tg.requestFullscreen(); // Новый метод Telegram API
+} else {
+    tg.expand(); // Фолбэк для старых версий
+}
+
         const urlParams = new URLSearchParams(window.location.search);
         let appData = {};
         try {
@@ -295,21 +393,63 @@
             if (rawData) appData = JSON.parse(decodeURIComponent(rawData));
         } catch(e) {}
 
-        // Заполнение профиля
+        // Юзер данные
         const user = tg.initDataUnsafe?.user || {};
         const firstName = user.first_name || 'Пользователь';
         document.getElementById('userName').innerText = firstName + (user.last_name ? ` ${user.last_name}` : '');
         document.getElementById('userId').innerText = `ID: ${user.id || 'Неизвестно'}`;
-        document.getElementById('userAvatar').innerText = firstName[0].toUpperCase();
 
-        if (appData.user_stats) {
-            document.getElementById('totalExchanges').innerText = appData.user_stats.exchanges || 0;
-            document.getElementById('totalVolume').innerText = `${(appData.user_stats.volume || 0).toLocaleString()} ₽`;
-            document.getElementById('refCount').innerText = appData.user_stats.refs || 0;
-            document.getElementById('refIncome').innerText = `${appData.user_stats.ref_income || 0} ₽`;
+        // Если у юзера есть аватарка в TG
+        const avatarEl = document.getElementById('userAvatar');
+        if (user.photo_url) {
+            avatarEl.innerHTML = `<img src="${user.photo_url}" alt="avatar">`;
+        } else {
+            avatarEl.innerText = firstName[0].toUpperCase();
         }
 
-        // Переключение табов
+        // Статистика и ЗВАНИЯ
+        if (appData.user_stats) {
+            const exCount = appData.user_stats.exchanges || 0;
+            const volume = appData.user_stats.volume || 0;
+
+            document.getElementById('totalExchanges').innerText = exCount;
+            document.getElementById('totalVolume').innerText = `${volume.toLocaleString()} ₽`;
+            document.getElementById('refCount').innerText = `${appData.user_stats.refs || 0} чел.`;
+            document.getElementById('refIncome').innerText = `${appData.user_stats.ref_income || 0} ₽`;
+
+            // Расчет звания
+            const badgeEl = document.getElementById('userRankBadge');
+            if (volume >= 1000000) badgeEl.innerText = '💎 Кибер-Кит';
+            else if (volume >= 500000) badgeEl.innerText = '🔥 Акула Обмена';
+            else if (volume >= 100000) badgeEl.innerText = '⚡ Опытный Трейдер';
+            else if (volume >= 10000) badgeEl.innerText = '🚀 Любитель';
+            else badgeEl.innerText = '🌱 Новичок';
+        }
+
+        // РЕНДЕР ТОП-50
+        const top50List = document.getElementById('top50List');
+        const leadersData = appData.top50 || [
+            {username: '@babocha', volume: 850000},
+            {username: '@crypto_king', volume: 520000},
+            {username: '@trader_pro', volume: 310000}
+        ];
+
+        let topHTML = '';
+        leadersData.forEach((item, idx) => {
+            let medal = `#${idx + 1}`;
+            if (idx === 0) medal = '🥇';
+            if (idx === 1) medal = '🥈';
+            if (idx === 2) medal = '🥉';
+
+            topHTML += `
+                <div class="leader-item">
+                    <div><span class="rank">${medal}</span> ${item.username}</div>
+                    <div style="font-weight: 700; color: #4ade80;">${item.volume.toLocaleString()} ₽</div>
+                </div>
+            `;
+        });
+        top50List.innerHTML = topHTML;
+
         function switchTab(tabName, event) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -318,104 +458,60 @@
             document.getElementById(`tab-${tabName}`).classList.add('active');
         }
 
+        function openSupport() {
+            tg.openTelegramLink('https://t.me/твой_саппорт_юзернейм'); // 👈 Укажи юзернейм саппорта
+        }
+
         function copyRefLink() {
             const link = `https://t.me/G00D_EXCHBot?start=${user.id || 0}`;
             navigator.clipboard.writeText(link);
             tg.showAlert('✨ Реферальная ссылка скопирована!');
         }
 
-        // --- КОСМИЧЕСКИЙ МЛЕЧНЫЙ ПУТЬ НА CANVAS ---
-const canvas = document.getElementById('stars-canvas');
-const ctx = canvas.getContext('2d');
-let stars = [];
-let nebulae = [];
+        // --- CANVAS МЛЕЧНЫЙ ПУТЬ ---
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    initCosmos();
-}
-window.addEventListener('resize', resizeCanvas);
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 60; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.8,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.015 + 0.005
+                });
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-function initCosmos() {
-    stars = [];
-    nebulae = [];
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Галактический фоновый блеск
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, 'rgba(15, 10, 30, 1)');
+            grad.addColorStop(0.5, 'rgba(60, 20, 100, 0.3)');
+            grad.addColorStop(1, 'rgba(8, 6, 18, 1)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 1. Создаем обычные звездные точки
-    const starCount = Math.floor((canvas.width * canvas.height) / 3000);
-    for (let i = 0; i < starCount; i++) {
-        stars.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: Math.random() * 1.8,
-            alpha: Math.random(),
-            speed: Math.random() * 0.015 + 0.005,
-            // Разноцветные звезды (белые, голубые, фиолетовые)
-            color: ['#ffffff', '#a78bfa', '#c084fc', '#60a5fa'][Math.floor(Math.random() * 4)]
-        });
-    }
-
-    // 2. Создаем «облака» Млечного пути (густые группы светящихся частиц вдоль диагонали)
-    const nebulaCount = 80;
-    for (let i = 0; i < nebulaCount; i++) {
-        // Концентрируем частицы по диагонали (от верхнего левого к нижнему правому углу)
-        const progress = Math.random();
-        const offsetX = (Math.random() - 0.5) * (canvas.width * 0.4);
-        const offsetY = (Math.random() - 0.5) * (canvas.height * 0.4);
-
-        nebulae.push({
-            x: progress * canvas.width + offsetX,
-            y: progress * canvas.height + offsetY,
-            radius: Math.random() * 80 + 40,
-            alpha: Math.random() * 0.15 + 0.05
-        });
-    }
-}
-
-function drawMilkyWay() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // --- СЛОЙ 1: Глубокий галактический градиент (Млечный путь по диагонали) ---
-    const milkyGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    milkyGradient.addColorStop(0, 'rgba(15, 10, 30, 1)');
-    milkyGradient.addColorStop(0.3, 'rgba(49, 16, 89, 0.45)');   // Насыщенный фиолетовый
-    milkyGradient.addColorStop(0.5, 'rgba(88, 28, 135, 0.6)');  // Сердцевина галактики (пурпур)
-    milkyGradient.addColorStop(0.7, 'rgba(29, 78, 216, 0.35)');  // Небула (голубоватый)
-    milkyGradient.addColorStop(1, 'rgba(10, 8, 20, 1)');
-
-    ctx.fillStyle = milkyGradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // --- СЛОЙ 2: Пылевые туманности Млечного пути ---
-    nebulae.forEach(n => {
-        const radGrad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius);
-        radGrad.addColorStop(0, `rgba(167, 139, 250, ${n.alpha})`);
-        radGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-        ctx.fillStyle = radGrad;
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-        ctx.fill();
-    });
-
-    // --- СЛОЙ 3: Мерцающие звезды ---
-    stars.forEach(star => {
-        star.alpha += star.speed;
-        if (star.alpha > 1 || star.alpha < 0.1) star.speed = -star.speed;
-
-        ctx.fillStyle = star.color;
-        ctx.globalAlpha = Math.abs(star.alpha);
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-        ctx.fill();
-    });
-    ctx.globalAlpha = 1.0;
-
-    requestAnimationFrame(drawMilkyWay);
-}
-
-resizeCanvas();
-drawMilkyWay();
+            stars.forEach(s => {
+                s.alpha += s.speed;
+                if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
+                ctx.fillStyle = `rgba(192, 132, 252, ${Math.abs(s.alpha)})`;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
     </script>
 </body>
 </html>

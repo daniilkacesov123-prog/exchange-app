@@ -23,12 +23,32 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            padding: 16px;
-            min-height: 100vh;
-        }
+        html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрируем контент на широких мониторах ПК */
+}
+
+/* Растягиваем контейнер на весь экран, но с максимальной шириной для удобства чтении на ПК */
+.container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 800px; /* Чтобы на 4K мониторах блоки не растягивались в длинную тонкую нитку */
+    padding: 16px;
+    box-sizing: border-box;
+}
 
         #stars-canvas {
             position: fixed;
@@ -146,8 +166,14 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+tg.ready();
+
+// Разворачиваем на весь экран (для ПК и мобилок)
+if (tg.requestFullscreen) {
+    tg.requestFullscreen(); // Новый метод Telegram API
+} else {
+    tg.expand(); // Фолбэк для старых версий
+}
 
         const urlParams = new URLSearchParams(window.location.search);
         let currentRate = 98.50;
