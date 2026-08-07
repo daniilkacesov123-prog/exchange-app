@@ -386,23 +386,42 @@
             document.getElementById('liveStatusBox').style.display = 'none';
         }
 
-        // 3. Статистика юзера
-        const stats = appData.user_stats;
+        // 3. Статистика юзера и имя
+        const stats = appData.user_stats || {
+            rank: "🏅 Новичок I",
+            exchanges: 0,
+            volume: 0,
+            refs: 0,
+            ref_income: 0,
+            volume_24h: 0,
+            place: 0
+        };
+
+        // Заполняем цифры
         document.getElementById('userRankBadge').innerText = stats.rank;
         document.getElementById('userExchanges').innerText = stats.exchanges;
         document.getElementById('userTurnover').innerText = `${stats.volume.toLocaleString()} ₽`;
         document.getElementById('userRefs').innerText = stats.refs;
         document.getElementById('refIncome').innerText = `${stats.ref_income.toLocaleString()} ₽`;
         document.getElementById('turnover24').innerText = `${stats.volume_24h.toLocaleString()} ₽`;
-        document.getElementById('userPlaceText').innerText = `Твоё место в рейтинге: #${stats.place}`;
-
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const user = tg.initDataUnsafe.user;
-            document.getElementById('userName').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-            if (user.photo_url) {
-                document.getElementById('userAvatar').innerHTML = `<img src="${user.photo_url}" class="avatar-img">`;
-            }
+        if (document.getElementById('userPlaceText')) {
+            document.getElementById('userPlaceText').innerText = `Твоё место в рейтинге: #${stats.place}`;
         }
+
+        // Достаем имя и аватар НАПРЯМУЮ из Telegram SDK
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe) {
+            const user = window.Telegram.WebApp.initDataUnsafe.user;
+            if (user) {
+                const fullName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+                document.getElementById('userName').innerText = fullName || 'Пользователь';
+        
+                if (user.photo_url) {
+                    document.getElementById('userAvatar').innerHTML = `<img src="${user.photo_url}" class="avatar-img">`;
+                } else if (user.first_name) {
+                    document.getElementById('userAvatar').innerText = user.first_name[0].toUpperCase();
+                }
+            }
+        }   
 
         function openSupport() {
             tg.openTelegramLink('https://t.me/Babocha_nerd');
