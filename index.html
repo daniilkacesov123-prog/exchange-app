@@ -406,21 +406,31 @@
     setSafe('turnover24', `${(stats.volume_24h || 0).toLocaleString()} ₽`);
     setSafe('userPlaceText', `Твоё место в рейтинге: #${stats.place || 0}`);
 
-    // Имя и Аватар из Telegram
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        const u = tg.initDataUnsafe.user;
-        const fullName = u.first_name + (u.last_name ? ' ' + u.last_name : '');
-        setSafe('userName', fullName || 'Пользователь');
+    // Имя и Аватар из Telegram (с задержкой для гарантии)
+        function loadProfile() {
+            const tg = window.Telegram && window.Telegram.WebApp;
+            
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                
+                // 1. Имя
+                const fullName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+                setSafe('userName', fullName || 'Пользователь');
 
-        const avatarEl = document.getElementById('userAvatar');
-        if (avatarEl) {
-            if (u.photo_url) {
-                avatarEl.innerHTML = `<img src="${u.photo_url}" class="avatar-img">`;
-            } else if (u.first_name) {
-                avatarEl.innerText = u.first_name[0].toUpperCase();
+                // 2. Аватарка
+                const avatarEl = document.getElementById('userAvatar');
+                if (avatarEl) {
+                    if (user.photo_url) {
+                        avatarEl.innerHTML = `<img src="${user.photo_url}" class="avatar-img">`;
+                    } else if (user.first_name) {
+                        avatarEl.innerText = user.first_name[0].toUpperCase();
+                    }
+                }
             }
         }
-    }
+
+        loadProfile();
+        setTimeout(loadProfile, 300);
 
     // 3. Калькулятор USDT -> RUB
     const usdtInput = document.getElementById('usdtInput');
