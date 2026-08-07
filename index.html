@@ -2,200 +2,283 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>G00D Exchange - Личный кабинет</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>G00D Exchange - Profile</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-color: #6366f1;
-            --text-color: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg-dark: #0a0814;
+            --card-bg: rgba(22, 16, 42, 0.75);
+            --border-color: rgba(139, 92, 246, 0.2);
+            --accent-purple: #8b5cf6;
+            --accent-glow: #a78bfa;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            user-select: none;
         }
 
         body {
-            margin: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             padding: 16px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            box-sizing: border-box;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
         }
 
-        /* Навигация (Табы) */
+        /* Канвас с анимированными звездами */
+        #stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Табы навигации */
         .tabs {
             display: flex;
             gap: 8px;
             background: var(--card-bg);
             padding: 6px;
-            border-radius: 12px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
             margin-bottom: 20px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 10px;
+            padding: 10px 4px;
             border: none;
             background: transparent;
             color: var(--text-muted);
             font-weight: 600;
             font-size: 13px;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .tab-btn.active {
-            background: var(--accent-color);
+            background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
             color: #fff;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
         }
 
-        /* Контент табов */
-        .tab-content {
-            display: none;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Карточки */
+        /* Космические Карточки */
         .card {
             background: var(--card-bg);
-            border-radius: 16px;
-            padding: 16px;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             margin-bottom: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .user-info {
+        /* Юзер Профиль */
+        .user-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
         .avatar {
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            background: var(--accent-color);
+            background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 24px;
             font-weight: bold;
-            font-size: 20px;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        .stat-grid {
+        .user-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .user-id {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Гриды статистики */
+        .grid-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 12px;
         }
 
-        .stat-item {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 12px;
-            border-radius: 10px;
+        .stat-card {
+            background: rgba(15, 11, 30, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 14px;
+            border-radius: 14px;
         }
 
-        .stat-label {
+        .stat-title {
             font-size: 12px;
             color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .stat-value {
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 4px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-glow);
+            margin-top: 6px;
         }
 
-        /* Кнопка скопировать */
-        .copy-btn {
-            width: 100%;
-            padding: 12px;
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
+        /* Лидерборд */
+        .leader-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
+        .leader-item:last-child { border-bottom: none; }
+
+        .rank {
+            font-weight: 800;
+            width: 28px;
+            color: var(--accent-glow);
+        }
+
+        /* Кнопка рефки */
+        .purple-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 14px;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            transition: all 0.2s ease;
+        }
+        .purple-btn:active { transform: scale(0.97); }
     </style>
 </head>
 <body>
 
-    <!-- Навигационные вкладки (без Сделки!) -->
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('profile')">👤 Профиль</button>
-        <button class="tab-btn" onclick="switchTab('history')">📜 История</button>
-        <button class="tab-btn" onclick="switchTab('leaders')">🏆 Лидеры</button>
-        <button class="tab-btn" onclick="switchTab('ref')">👥 Рефка</button>
-    </div>
+    <!-- Фон: Анимированный космос со звездами -->
+    <canvas id="stars-canvas"></canvas>
 
-    <!-- 1. ПРОФИЛЬ -->
-    <div id="tab-profile" class="tab-content active">
-        <div class="card">
-            <div class="user-info">
-                <div class="avatar" id="userAvatar">U</div>
-                <div>
-                    <div style="font-weight: bold;" id="userName">Загрузка...</div>
-                    <div style="font-size: 12px; color: var(--text-muted);" id="userId">ID: ---</div>
+    <div class="container">
+        <!-- Навигация -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('profile', event)">👤 Профиль</button>
+            <button class="tab-btn" onclick="switchTab('history', event)">📜 История</button>
+            <button class="tab-btn" onclick="switchTab('leaders', event)">🏆 Лидеры</button>
+            <button class="tab-btn" onclick="switchTab('ref', event)">👥 Рефка</button>
+        </div>
+
+        <!-- 1. ПРОФИЛЬ -->
+        <div id="tab-profile" class="tab-content active">
+            <div class="card">
+                <div class="user-header">
+                    <div class="avatar" id="userAvatar">U</div>
+                    <div>
+                        <div class="user-name" id="userName">Загрузка...</div>
+                        <div class="user-id" id="userId">ID: ---</div>
+                    </div>
                 </div>
-            </div>
-            <div class="stat-grid">
-                <div class="stat-item">
-                    <div class="stat-label">Всего обменов</div>
-                    <div class="stat-value" id="totalExchanges">0</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Оборот</div>
-                    <div class="stat-value" id="totalVolume">0 ₽</div>
+
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <div class="stat-title">Всего сделок</div>
+                        <div class="stat-value" id="totalExchanges">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Оборот</div>
+                        <div class="stat-value" id="totalVolume">0 ₽</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- 2. ИСТОРИЯ -->
-    <div id="tab-history" class="tab-content">
-        <div class="card">
-            <h3 style="margin-top:0;">История обменов</h3>
-            <div id="historyList" style="color: var(--text-muted); font-size: 14px;">
-                У вас пока нет завершенных обменов.
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. ЛИДЕРЫ -->
-    <div id="tab-leaders" class="tab-content">
-        <div class="card">
-            <h3 style="margin-top:0;">Топ трейдеров 🏆</h3>
-            <div id="leadersList" style="font-size: 14px;">
-                1. @babocha — 500,000 ₽<br>
-                2. @crypto_king — 320,000 ₽<br>
-                3. @trader777 — 150,000 ₽
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. РЕФЕРАЛЫ -->
-    <div id="tab-ref" class="tab-content">
-        <div class="card">
-            <h3 style="margin-top:0;">Реферальная программа</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Получайте 0.5% от суммы каждого обмена ваших друзей!</p>
-            <div class="stat-grid">
-                <div class="stat-item">
-                    <div class="stat-label">Приглашено</div>
-                    <div class="stat-value" id="refCount">0 чел.</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Заработано</div>
-                    <div class="stat-value" id="refEarned">0 ₽</div>
+        <!-- 2. ИСТОРИЯ -->
+        <div id="tab-history" class="tab-content">
+            <div class="card">
+                <h3 style="margin-bottom: 12px; font-size: 16px;">История обменов</h3>
+                <div id="historyList" style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px 0;">
+                    Завершенных сделок пока нет 🚀
                 </div>
             </div>
-            <button class="copy-btn" onclick="copyRefLink()">Скопировать реф. ссылку</button>
+        </div>
+
+        <!-- 3. ЛИДЕРЫ -->
+        <div id="tab-leaders" class="tab-content">
+            <div class="card">
+                <h3 style="margin-bottom: 16px; font-size: 16px;">Топ трейдеров 🏆</h3>
+                <div class="leader-item">
+                    <div><span class="rank">🥇</span> @babocha</div>
+                    <div style="font-weight: 600; color: #4ade80;">500 000 ₽</div>
+                </div>
+                <div class="leader-item">
+                    <div><span class="rank">🥈</span> @crypto_pro</div>
+                    <div style="font-weight: 600; color: #4ade80;">320 000 ₽</div>
+                </div>
+                <div class="leader-item">
+                    <div><span class="rank">🥉</span> @trader_777</div>
+                    <div style="font-weight: 600; color: #4ade80;">180 000 ₽</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. РЕФЕРАЛЫ -->
+        <div id="tab-ref" class="tab-content">
+            <div class="card">
+                <h3 style="margin-bottom: 8px; font-size: 16px;">Реферальная система</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                    Зарабатывайте 0.5% от суммы каждого обмена приглашённых друзей!
+                </p>
+
+                <div class="grid-stats">
+                    <div class="stat-card">
+                        <div class="stat-title">Рефералов</div>
+                        <div class="stat-value" id="refCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Доход</div>
+                        <div class="stat-value" id="refIncome">0 ₽</div>
+                    </div>
+                </div>
+
+                <button class="purple-btn" onclick="copyRefLink()">Скопировать реф. ссылку</button>
+            </div>
         </div>
     </div>
 
@@ -204,31 +287,32 @@
         tg.ready();
         tg.expand();
 
-        // Парсинг данных из URL
+        // Парсим параметры из URL
         const urlParams = new URLSearchParams(window.location.search);
         let appData = {};
         try {
             const rawData = urlParams.get('data');
             if (rawData) appData = JSON.parse(decodeURIComponent(rawData));
-        } catch(e) { console.error(e); }
+        } catch(e) {}
 
-        // Заполнение данных юзера
+        // Заполнение профиля
         const user = tg.initDataUnsafe?.user || {};
-        document.getElementById('userName').innerText = user.first_name ? `${user.first_name} ${user.last_name || ''}` : 'Пользователь';
-        document.getElementById('userId').innerText = `ID: ${user.id || 'Неизвестен'}`;
-        document.getElementById('userAvatar').innerText = (user.first_name || 'U')[0].toUpperCase();
+        const firstName = user.first_name || 'Пользователь';
+        document.getElementById('userName').innerText = firstName + (user.last_name ? ` ${user.last_name}` : '');
+        document.getElementById('userId').innerText = `ID: ${user.id || 'Неизвестно'}`;
+        document.getElementById('userAvatar').innerText = firstName[0].toUpperCase();
 
         if (appData.user_stats) {
             document.getElementById('totalExchanges').innerText = appData.user_stats.exchanges || 0;
-            document.getElementById('totalVolume').innerText = `${appData.user_stats.volume || 0} ₽`;
-            document.getElementById('refCount').innerText = `${appData.user_stats.refs || 0} чел.`;
-            document.getElementById('refEarned').innerText = `${appData.user_stats.ref_income || 0} ₽`;
+            document.getElementById('totalVolume').innerText = `${(appData.user_stats.volume || 0).toLocaleString()} ₽`;
+            document.getElementById('refCount').innerText = appData.user_stats.refs || 0;
+            document.getElementById('refIncome').innerText = `${appData.user_stats.ref_income || 0} ₽`;
         }
 
         // Переключение табов
-        function switchTab(tabName) {
+        function switchTab(tabName, event) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
             event.currentTarget.classList.add('active');
             document.getElementById(`tab-${tabName}`).classList.add('active');
@@ -237,8 +321,101 @@
         function copyRefLink() {
             const link = `https://t.me/G00D_EXCHBot?start=${user.id || 0}`;
             navigator.clipboard.writeText(link);
-            tg.showAlert('✅ Реферальная ссылка скопирована!');
+            tg.showAlert('✨ Реферальная ссылка скопирована!');
         }
+
+        // --- КОСМИЧЕСКИЙ МЛЕЧНЫЙ ПУТЬ НА CANVAS ---
+const canvas = document.getElementById('stars-canvas');
+const ctx = canvas.getContext('2d');
+let stars = [];
+let nebulae = [];
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initCosmos();
+}
+window.addEventListener('resize', resizeCanvas);
+
+function initCosmos() {
+    stars = [];
+    nebulae = [];
+
+    // 1. Создаем обычные звездные точки
+    const starCount = Math.floor((canvas.width * canvas.height) / 3000);
+    for (let i = 0; i < starCount; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 1.8,
+            alpha: Math.random(),
+            speed: Math.random() * 0.015 + 0.005,
+            // Разноцветные звезды (белые, голубые, фиолетовые)
+            color: ['#ffffff', '#a78bfa', '#c084fc', '#60a5fa'][Math.floor(Math.random() * 4)]
+        });
+    }
+
+    // 2. Создаем «облака» Млечного пути (густые группы светящихся частиц вдоль диагонали)
+    const nebulaCount = 80;
+    for (let i = 0; i < nebulaCount; i++) {
+        // Концентрируем частицы по диагонали (от верхнего левого к нижнему правому углу)
+        const progress = Math.random();
+        const offsetX = (Math.random() - 0.5) * (canvas.width * 0.4);
+        const offsetY = (Math.random() - 0.5) * (canvas.height * 0.4);
+
+        nebulae.push({
+            x: progress * canvas.width + offsetX,
+            y: progress * canvas.height + offsetY,
+            radius: Math.random() * 80 + 40,
+            alpha: Math.random() * 0.15 + 0.05
+        });
+    }
+}
+
+function drawMilkyWay() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // --- СЛОЙ 1: Глубокий галактический градиент (Млечный путь по диагонали) ---
+    const milkyGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    milkyGradient.addColorStop(0, 'rgba(15, 10, 30, 1)');
+    milkyGradient.addColorStop(0.3, 'rgba(49, 16, 89, 0.45)');   // Насыщенный фиолетовый
+    milkyGradient.addColorStop(0.5, 'rgba(88, 28, 135, 0.6)');  // Сердцевина галактики (пурпур)
+    milkyGradient.addColorStop(0.7, 'rgba(29, 78, 216, 0.35)');  // Небула (голубоватый)
+    milkyGradient.addColorStop(1, 'rgba(10, 8, 20, 1)');
+
+    ctx.fillStyle = milkyGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // --- СЛОЙ 2: Пылевые туманности Млечного пути ---
+    nebulae.forEach(n => {
+        const radGrad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius);
+        radGrad.addColorStop(0, `rgba(167, 139, 250, ${n.alpha})`);
+        radGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        ctx.fillStyle = radGrad;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // --- СЛОЙ 3: Мерцающие звезды ---
+    stars.forEach(star => {
+        star.alpha += star.speed;
+        if (star.alpha > 1 || star.alpha < 0.1) star.speed = -star.speed;
+
+        ctx.fillStyle = star.color;
+        ctx.globalAlpha = Math.abs(star.alpha);
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+    });
+    ctx.globalAlpha = 1.0;
+
+    requestAnimationFrame(drawMilkyWay);
+}
+
+resizeCanvas();
+drawMilkyWay();
     </script>
 </body>
 </html>
