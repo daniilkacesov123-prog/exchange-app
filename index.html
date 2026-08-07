@@ -371,7 +371,7 @@
 
                 <div class="badge-container">
                     <span class="badge">🏆 НОВИЧОК</span>
-                    <span class="badge" id="totalUsersCount">👥 Всего в боте: --</span>
+                    <span class="badge" id="totalUsersCount">👥 Всего в боте: ...</span>
                 </div>
 
                 <div class="stats-grid">
@@ -416,9 +416,7 @@
                 </div>
             </div>
 
-            <div class="footer-counter">
-                <span style="color: var(--green-status);">✔</span> Уже 51 668 успешных обменов
-            </div>
+            
         </div>
 
         <!-- ================= Вкладка 2: Сделки ================= -->
@@ -489,20 +487,23 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        
+    
         // Разворачиваем на весь экран
         tg.expand();
         if (tg.requestFullscreen) {
             tg.requestFullscreen();
         }
 
-        // Парсим параметры URL (курс, кол-во юзеров)
+        // Парсим параметры из URL (курс и кол-во юзеров из базы)
         const urlParams = new URLSearchParams(window.location.search);
         let RATE = parseFloat(urlParams.get('rate')) || 98.50;
-        let totalUsers = urlParams.get('users') || '1240';
+        let totalUsers = urlParams.get('users') || '0'; // Заменили 1240 на 0 по умолчанию
 
+        // Подставляем реальные значения в шапку и профиль
         document.getElementById('currentRate').innerText = `${RATE} ₽`;
         document.getElementById('totalUsersCount').innerText = `👥 Всего в боте: ${totalUsers}`;
+
+    
 
         // Данные юзера из Telegram
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
