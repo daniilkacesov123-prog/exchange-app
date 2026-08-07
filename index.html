@@ -23,15 +23,79 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
+            /* Градиенты туманностей */
             background-image: 
-                radial-gradient(circle at 50% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 40%);
+                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 60%);
             color: var(--text-main);
             margin: 0;
             padding: 12px;
             box-sizing: border-box;
             user-select: none;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 🌌 ЭФФЕКТ КОСМОСА И ЗВЁЗД 🌌 */
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Мелкие и средние звёзды (генерация точками) */
+        body::before {
+            background-image: 
+                radial-gradient(1.5px 1.5px at 10px 30px, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(1.5px 1.5px at 50px 160px, rgba(255, 255, 255, 0.6), transparent),
+                radial-gradient(2px 2px at 90px 40px, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.5), transparent),
+                radial-gradient(2px 2px at 160px 220px, rgba(245, 246, 186, 0.8), transparent),
+                radial-gradient(1.5px 1.5px at 210px 100px, rgba(255, 255, 255, 0.7), transparent),
+                radial-gradient(1px 1px at 250px 180px, rgba(255, 255, 255, 0.4), transparent),
+                radial-gradient(2px 2px at 290px 40px, rgba(255, 255, 255, 0.85), transparent),
+                radial-gradient(1.5px 1.5px at 330px 140px, rgba(255, 255, 255, 0.6), transparent),
+                radial-gradient(1px 1px at 370px 240px, rgba(255, 255, 255, 0.5), transparent),
+                radial-gradient(2px 2px at 410px 90px, rgba(212, 175, 55, 0.8), transparent);
+            background-repeat: repeat;
+            background-size: 400px 300px;
+            opacity: 0.7;
+            animation: starsTwinkle 4s ease-in-out infinite alternate;
+        }
+
+        /* Крупные редкие звёзды с подсветом */
+        body::after {
+            background-image: 
+                radial-gradient(2.5px 2.5px at 70px 90px, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(3px 3px at 200px 270px, rgba(165, 180, 252, 0.85), transparent),
+                radial-gradient(2.5px 2.5px at 320px 70px, rgba(253, 224, 71, 0.8), transparent),
+                radial-gradient(2px 2px at 180px 150px, rgba(255, 255, 255, 0.7), transparent);
+            background-repeat: repeat;
+            background-size: 350px 350px;
+            opacity: 0.8;
+            animation: starsTwinkle 6s ease-in-out infinite alternate-reverse;
+        }
+
+        /* Анимация плавной пульсации/мерцания */
+        @keyframes starsTwinkle {
+            0% {
+                opacity: 0.3;
+                transform: scale(0.98);
+            }
+            50% {
+                opacity: 0.85;
+            }
+            100% {
+                opacity: 0.4;
+                transform: scale(1.02);
+            }
         }
 
         .container {
