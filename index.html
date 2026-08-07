@@ -14,6 +14,7 @@
             --accent-purple: #6366f1;
             --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            --gold-text: #e5c158;
             --text-main: #ffffff;
             --text-muted: #8b9bb4;
             --green-status: #10b981;
@@ -35,11 +36,9 @@
             overflow-x: hidden;
         }
 
-        /* 🌌 ЭФФЕКТ КОСМОСА 🌌 */
+        /* 🌌 КОСМОС 🌌 */
         body::before, body::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: -1;
         }
         body::before {
@@ -49,9 +48,7 @@
                 radial-gradient(1.5px 1.5px at 210px 100px, rgba(255, 255, 255, 0.7), transparent),
                 radial-gradient(2px 2px at 290px 40px, rgba(255, 255, 255, 0.85), transparent),
                 radial-gradient(2px 2px at 410px 90px, rgba(212, 175, 55, 0.8), transparent);
-            background-repeat: repeat;
-            background-size: 400px 300px;
-            opacity: 0.7;
+            background-repeat: repeat; background-size: 400px 300px; opacity: 0.7;
             animation: starsTwinkle 4s ease-in-out infinite alternate;
         }
         body::after {
@@ -59,9 +56,7 @@
                 radial-gradient(2.5px 2.5px at 70px 90px, rgba(255, 255, 255, 0.9), transparent),
                 radial-gradient(3px 3px at 200px 270px, rgba(165, 180, 252, 0.85), transparent),
                 radial-gradient(2.5px 2.5px at 320px 70px, rgba(253, 224, 71, 0.8), transparent);
-            background-repeat: repeat;
-            background-size: 350px 350px;
-            opacity: 0.8;
+            background-repeat: repeat; background-size: 350px 350px; opacity: 0.8;
             animation: starsTwinkle 6s ease-in-out infinite alternate-reverse;
         }
         @keyframes starsTwinkle {
@@ -72,10 +67,7 @@
 
         .container { max-width: 440px; margin: 0 auto; }
 
-        /* ---------------- Логотип ---------------- */
-        .brand-header {
-            display: flex; justify-content: space-between; align-items: center; padding: 4px 8px 12px;
-        }
+        .brand-header { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px 12px; }
         .brand-title {
             font-size: 22px; font-weight: 900; letter-spacing: 1px;
             background: var(--gold-gradient);
@@ -84,7 +76,6 @@
         }
         .brand-badge { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 
-        /* ---------------- Навигация (5 Табов) ---------------- */
         .top-nav {
             display: flex; background: rgba(15, 20, 31, 0.85); border-radius: 16px;
             padding: 4px; margin-bottom: 16px; border: 1px solid var(--card-border);
@@ -104,7 +95,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* ---------------- Профиль ---------------- */
+        /* Профиль */
         .main-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
             border-radius: 24px; padding: 20px 16px; text-align: center; margin-bottom: 14px;
@@ -132,7 +123,37 @@
         .stat-val { font-size: 16px; font-weight: 800; margin-bottom: 2px; color: #ffffff; }
         .stat-lbl { font-size: 11px; color: var(--text-muted); }
 
-        /* ---------------- Лидерборд ---------------- */
+        /* Живой статус */
+        .live-status {
+            background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 16px; padding: 12px 16px; margin-bottom: 14px;
+            display: flex; align-items: center; font-size: 12px; gap: 8px; color: #e2e8f0;
+        }
+        .status-dot {
+            width: 8px; height: 8px; background-color: var(--green-status);
+            border-radius: 50%; box-shadow: 0 0 10px var(--green-status);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        /* Поддержка */
+        .support-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 18px; padding: 16px; display: flex; align-items: center; gap: 14px;
+            margin-bottom: 14px; cursor: pointer;
+        }
+        .support-icon {
+            width: 44px; height: 44px; background: var(--input-bg); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; color: #818cf8; font-size: 20px;
+            border: 1px solid var(--card-border);
+        }
+
+        .footer-counter {
+            text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 16px;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+
+        /* Лидерборд */
         .leader-item {
             background: var(--input-bg); border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 14px; padding: 12px 14px; margin-bottom: 8px;
@@ -141,14 +162,13 @@
         .leader-item.top-1 { border-color: rgba(212, 175, 55, 0.5); background: rgba(212, 175, 55, 0.08); }
         .leader-item.top-2 { border-color: rgba(148, 163, 184, 0.5); background: rgba(148, 163, 184, 0.08); }
         .leader-item.top-3 { border-color: rgba(180, 83, 9, 0.5); background: rgba(180, 83, 9, 0.08); }
-
         .leader-rank { font-weight: 800; font-size: 14px; width: 30px; }
         .leader-info { flex: 1; text-align: left; padding-left: 8px; }
         .leader-name { font-size: 14px; font-weight: 700; color: #ffffff; }
         .leader-badge { font-size: 10px; color: var(--text-muted); }
         .leader-vol { font-size: 13px; font-weight: 800; color: var(--gold-text); }
 
-        /* ---------------- Элементы формы ---------------- */
+        /* Формы */
         .section-card {
             background: var(--card-bg); border: 1px solid var(--card-border);
             border-radius: 20px; padding: 16px; margin-bottom: 14px;
@@ -175,7 +195,6 @@
             <div class="brand-badge">24/7</div>
         </div>
 
-        <!-- 5 Табов в навигации -->
         <div class="top-nav">
             <div class="nav-item active" onclick="switchTab('main', this)">
                 <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg> Главная
@@ -229,10 +248,29 @@
                     </div>
                 </div>
 
-                <div class="stat-box" style="margin-bottom: 0;">
+                <div class="stat-box">
                     <div class="stat-val" id="turnover24">0 ₽</div>
                     <div class="stat-lbl">⏱ Оборот за 24 часа</div>
                 </div>
+            </div>
+
+            <!-- Живой статус -->
+            <div class="live-status">
+                <div class="status-dot"></div>
+                <div><b>В РАБОТЕ</b> ID 6•••41 · 39.76 USDT → 4 103 ₽</div>
+            </div>
+
+            <!-- Вернули кнопку Поддержки -->
+            <div class="support-card" onclick="openSupport()">
+                <div class="support-icon">💬</div>
+                <div>
+                    <div style="font-weight: 700; font-size: 15px;">Поддержка</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Связаться с нами</div>
+                </div>
+            </div>
+
+            <div class="footer-counter">
+                <span style="color: var(--green-status);">✔</span> Уже 51 668 успешных обменов
             </div>
         </div>
 
@@ -255,19 +293,38 @@
 
             <div class="section-card">
                 <div style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">📋 Реквизиты получателя</div>
+                
                 <div class="form-group">
-                    <label>Номер телефона (СБП)</label>
-                    <input type="tel" id="phone" placeholder="+7 (999) 000-00-00">
+                    <label>Телефон</label>
+                    <input type="tel" id="phone" placeholder="+7, 8 или 9...">
                 </div>
+
                 <div class="form-group">
-                    <label>ФИО Получателя</label>
-                    <input type="text" id="fullName" placeholder="Иванов Иван Иванович">
+                    <label>ФИО</label>
+                    <input type="text" id="fullName" placeholder="Иван Иванов">
+                </div>
+
+                <div class="form-group">
+                    <label>Карта (необязательно)</label>
+                    <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000">
+                </div>
+
+                <div class="form-group">
+                    <label>Банк</label>
+                    <input type="text" id="bankName" placeholder="Сбербанк">
+                </div>
+            </div>
+
+                <!-- Вернули инпут для Банка -->
+                <div class="form-group">
+                    <label>Банк</label>
+                    <input type="text" id="bankName" placeholder="Сбербанк, Т-Банк, ВТБ и др.">
                 </div>
             </div>
             <button class="btn-submit" id="sendBtn">Подать заявку</button>
         </div>
 
-        <!-- ================= Вкладка 3: Лидерборд (Топ-50) ================= -->
+        <!-- ================= Вкладка 3: Лидерборд ================= -->
         <div id="tab-leaders" class="tab-content">
             <div class="section-card" style="margin-bottom: 10px;">
                 <div style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">🏆 Таблица лидеров</div>
@@ -303,22 +360,25 @@
         tg.expand();
         if (tg.requestFullscreen) tg.requestFullscreen();
 
-        // Парсинг данных из Python
+        // Гибкое считывание данных (из ?data=... ИЛИ из обычных параметров ?rate=...)
         const urlParams = new URLSearchParams(window.location.search);
         let rawData = urlParams.get('data');
         
         let appData = {
-            rate: 98.50,
-            total_users: 0,
+            rate: parseFloat(urlParams.get('rate')) || 98.50,
+            total_users: urlParams.get('users') || 0,
             user_stats: { exchanges: 0, volume: 0, volume_24h: 0, refs: 0, ref_income: 0, rank: "🥉 Новичок I", place: 0 },
             leaderboard: []
         };
 
         if (rawData) {
-            try { appData = JSON.parse(decodeURIComponent(rawData)); } catch(e) { console.error(e); }
+            try { 
+                const parsed = JSON.parse(decodeURIComponent(rawData));
+                appData = { ...appData, ...parsed };
+            } catch(e) { console.error(e); }
         }
 
-        // Подстановка статистики
+        // Вывод курса и данных
         document.getElementById('currentRate').innerText = `${appData.rate} ₽`;
         document.getElementById('totalUsersCount').innerText = `👥 Всего в боте: ${appData.total_users}`;
         
@@ -331,7 +391,7 @@
         document.getElementById('turnover24').innerText = `${stats.volume_24h.toLocaleString()} ₽`;
         document.getElementById('userPlaceText').innerText = `Твоё место в рейтинге: #${stats.place}`;
 
-        // Данные пользователя Telegram
+        // Данные юзера из Telegram
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
             document.getElementById('userName').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
@@ -340,28 +400,37 @@
             }
         }
 
-        // Рендер Лидерборда (Топ-50)
+        // Функция открытия поддержки
+        function openSupport() {
+            tg.openTelegramLink('https://t.me/Babocha_nerd');
+        }
+
+        // Рендер Лидерборда
         const leaderContainer = document.getElementById('leaderboardList');
         leaderContainer.innerHTML = '';
 
-        appData.leaderboard.forEach(item => {
-            let medal = `#${item.place}`;
-            let topClass = '';
-            if (item.place === 1) { medal = '🥇'; topClass = 'top-1'; }
-            else if (item.place === 2) { medal = '🥈'; topClass = 'top-2'; }
-            else if (item.place === 3) { medal = '🥉'; topClass = 'top-3'; }
+        if (appData.leaderboard.length === 0) {
+            leaderContainer.innerHTML = `<div style="text-align:center; color: var(--text-muted); padding: 20px;">Список лидеров пока пуст</div>`;
+        } else {
+            appData.leaderboard.forEach(item => {
+                let medal = `#${item.place}`;
+                let topClass = '';
+                if (item.place === 1) { medal = '🥇'; topClass = 'top-1'; }
+                else if (item.place === 2) { medal = '🥈'; topClass = 'top-2'; }
+                else if (item.place === 3) { medal = '🥉'; topClass = 'top-3'; }
 
-            leaderContainer.innerHTML += `
-                <div class="leader-item ${topClass}">
-                    <div class="leader-rank">${medal}</div>
-                    <div class="leader-info">
-                        <div class="leader-name">${item.name}</div>
-                        <div class="leader-badge">${item.rank}</div>
+                leaderContainer.innerHTML += `
+                    <div class="leader-item ${topClass}">
+                        <div class="leader-rank">${medal}</div>
+                        <div class="leader-info">
+                            <div class="leader-name">${item.name}</div>
+                            <div class="leader-badge">${item.rank}</div>
+                        </div>
+                        <div class="leader-vol">${item.volume.toLocaleString()} ₽</div>
                     </div>
-                    <div class="leader-vol">${item.volume.toLocaleString()} ₽</div>
-                </div>
-            `;
-        });
+                `;
+            });
+        }
 
         // Навигация
         function switchTab(tabName, el) {
@@ -378,12 +447,37 @@
             }
         }
 
-        // Калькулятор
+        // Динамический калькулятор
         const usdtInput = document.getElementById('usdtInput');
         const rubResult = document.getElementById('rubResult');
         usdtInput.addEventListener('input', () => {
             const usdt = parseFloat(usdtInput.value) || 0;
             rubResult.innerText = `${(usdt * appData.rate).toFixed(2)} ₽`;
+        });
+
+        // Отправка заявки
+        document.getElementById('sendBtn').addEventListener('click', () => {
+            const usdt = usdtInput.value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+            const cardNumber = document.getElementById('cardNumber').value.trim(); // Необязательное
+            const bankName = document.getElementById('bankName').value.trim();
+
+            if (!usdt || !phone || !fullName || !bankName) {
+                tg.showAlert('Заполните Телефон, ФИО и Банк!');
+                return;
+            }
+
+            tg.sendData(JSON.stringify({
+                usdt, 
+                phone, 
+                fullName, 
+                cardNumber: cardNumber || "Не указана",
+                bankName,
+                rub: (parseFloat(usdt) * appData.rate).toFixed(2),
+                rate: appData.rate
+            }));
+            tg.close();
         });
     </script>
 </body>
