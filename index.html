@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Exchange App</title>
+    <title>G00D_EXCH</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -13,9 +13,10 @@
             --input-bg: #111622;
             --accent-purple: #6366f1;
             --accent-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            --gold-text: #e5c158;
             --text-main: #ffffff;
             --text-muted: #8b9bb4;
-            --gold-badge: #d97706;
             --green-status: #10b981;
         }
 
@@ -47,13 +48,14 @@
         }
 
         .brand-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 900;
             letter-spacing: 1px;
-        }
-
-        .brand-title span {
-            color: #ef4444;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
         }
 
         .brand-badge {
@@ -124,8 +126,8 @@
             margin: 0 auto 12px;
             border-radius: 50%;
             padding: 3px;
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            background: var(--gold-gradient);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
         }
 
         .avatar-img {
@@ -174,28 +176,15 @@
             background: var(--input-bg);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 16px;
-            padding: 12px 14px;
+            padding: 14px;
             text-align: left;
-            position: relative;
         }
 
         .stat-val {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 800;
             margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .top-tag {
-            background: rgba(217, 119, 6, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(217, 119, 6, 0.4);
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-weight: 700;
+            color: #ffffff;
         }
 
         .stat-lbl {
@@ -207,7 +196,7 @@
             background: var(--input-bg);
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 16px;
-            padding: 12px 14px;
+            padding: 14px;
             text-align: left;
         }
 
@@ -346,9 +335,9 @@
 <body>
     <div class="container">
 
-        <!-- Шапка с брендом -->
+        <!-- Шапка с брендом (Золотой логотип) -->
         <div class="brand-header">
-            <div class="brand-title">OXXXY<span>PAY</span></div>
+            <div class="brand-title">G00D_EXCH</div>
             <div class="brand-badge">24/7</div>
         </div>
 
@@ -382,33 +371,33 @@
 
                 <div class="badge-container">
                     <span class="badge">🏆 НОВИЧОК</span>
-                    <span class="badge">👥 Всего в боте: 6793</span>
+                    <span class="badge" id="totalUsersCount">👥 Всего в боте: --</span>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-box">
-                        <div class="stat-val">0 <span class="top-tag">🏆 топ-2703</span></div>
+                        <div class="stat-val" id="userExchanges">0</div>
                         <div class="stat-lbl">🔄 Обмены</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-val">0 ₽ <span class="top-tag">🏆 топ-2667</span></div>
+                        <div class="stat-val" id="userTurnover">0 ₽</div>
                         <div class="stat-lbl">📊 Оборот</div>
                     </div>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-box">
-                        <div class="stat-val">0 <span class="top-tag">🏆 топ-689</span></div>
+                        <div class="stat-val" id="userRefs">0</div>
                         <div class="stat-lbl">👥 Рефералы</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-val">0 ₽ <span class="top-tag">🏆 топ-436</span></div>
+                        <div class="stat-val" id="refIncome">0 ₽</div>
                         <div class="stat-lbl">💰 Реф. доход</div>
                     </div>
                 </div>
 
                 <div class="full-stat-box">
-                    <div class="stat-val">0 ₽ <span class="top-tag">🏆 топ-106</span></div>
+                    <div class="stat-val" id="turnover24">0 ₽</div>
                     <div class="stat-lbl">⏱ Оборот за 24 часа</div>
                 </div>
             </div>
@@ -501,11 +490,19 @@
     <script>
         const tg = window.Telegram.WebApp;
         
-        // РАЗВОРАЧИВАЕМ НА ВЕСЬ ЭКРАН (Обе функции для 100% срабатывания)
+        // Разворачиваем на весь экран
         tg.expand();
         if (tg.requestFullscreen) {
             tg.requestFullscreen();
         }
+
+        // Парсим параметры URL (курс, кол-во юзеров)
+        const urlParams = new URLSearchParams(window.location.search);
+        let RATE = parseFloat(urlParams.get('rate')) || 98.50;
+        let totalUsers = urlParams.get('users') || '1240';
+
+        document.getElementById('currentRate').innerText = `${RATE} ₽`;
+        document.getElementById('totalUsersCount').innerText = `👥 Всего в боте: ${totalUsers}`;
 
         // Данные юзера из Telegram
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -545,10 +542,6 @@
         }
 
         // Калькулятор
-        const urlParams = new URLSearchParams(window.location.search);
-        let RATE = parseFloat(urlParams.get('rate')) || 98.50;
-        document.getElementById('currentRate').innerText = `${RATE} ₽`;
-
         const usdtInput = document.getElementById('usdtInput');
         const rubResult = document.getElementById('rubResult');
 
