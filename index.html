@@ -7,10 +7,11 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-dark: #080612;
-            --card-bg: rgba(20, 15, 38, 0.75);
-            --border-purple: rgba(139, 92, 246, 0.25);
-            --accent-purple: #8b5cf6;
+            --bg-dark: #05040a;
+            /* Более прозрачный фон карточек для эффекта стекла */
+            --card-glass: rgba(25, 18, 45, 0.55); 
+            --border-purple: rgba(167, 139, 250, 0.2);
+            --accent-gold: #fcf6ba;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
         }
@@ -21,35 +22,23 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             user-select: none;
-            }
+        }
 
         html, body {
             width: 100%;
             height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
+            overflow: hidden; /* Фон не скроллится */
         }
 
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Центрируем контент на широких мониторах ПК */
+            align-items: center;
         }
 
-        /* Растягиваем контейнер на весь экран, но с максимальной шириной для удобства чтении на ПК */
-        .container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 800px; /* Чтобы на 4K мониторах блоки не растягивались в длинную тонкую нитку */
-            padding: 16px;
-            box-sizing: border-box;
-        }
-
+        /* 🌌 ФОН: МЛЕЧНЫЙ ПУТЬ НА CANVAS */
         #stars-canvas {
             position: fixed;
             top: 0;
@@ -60,29 +49,38 @@
             pointer-events: none;
         }
 
+        /* КОНТЕЙНЕР ДЛЯ ПК И МОБИЛОК */
         .container {
             position: relative;
             z-index: 1;
+            width: 100%;
+            max-width: 600px; /* Ограничиваем ширину на ПК для красоты */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            box-sizing: border-box;
         }
 
         /* 👑 ЗОЛОТОЙ ПЕРЕЛИВАЮЩИЙСЯ ЛОГОТИП */
         .brand-header {
             text-align: center;
-            margin-bottom: 20px;
+            padding: 10px 0 20px 0;
+            flex-shrink: 0;
         }
 
         .gold-title {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 900;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
             background-size: 200% auto;
-            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text; /* Кроссбраузерность */
             animation: goldShine 4s linear infinite;
             text-transform: uppercase;
-            filter: drop-shadow(0 2px 8px rgba(191, 149, 63, 0.4));
+            filter: drop-shadow(0 0 10px rgba(191, 149, 63, 0.6));
         }
 
         @keyframes goldShine {
@@ -90,78 +88,56 @@
             100% { background-position: 200% center; }
         }
 
-        /* ТАБЫ */
-        .tabs {
-            display: flex;
-            gap: 6px;
-            background: var(--card-bg);
-            padding: 5px;
-            border-radius: 16px;
+        /* 👤 ОФОРМЛЕНИЕ ПРОФИЛЯ (GLASSMORPHISM) */
+        .profile-card {
+            background: var(--card-glass);
+            border-radius: 24px;
+            padding: 25px;
             border: 1px solid var(--border-purple);
-            backdrop-filter: blur(12px);
-            margin-bottom: 16px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px 2px;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
-        }
-
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* КАРТОЧКИ */
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid var(--border-purple);
-            backdrop-filter: blur(16px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-            margin-bottom: 16px;
-        }
-
-        /* 👤 ПРОФИЛЬ ПО ЦЕНТРУ */
-        .profile-center {
+            backdrop-filter: blur(20px); /* Сильное размытие фона */
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.6), inset 0 0 20px 0 rgba(167, 139, 250, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 16px;
         }
 
-        .avatar-glow-wrapper {
+        /* Блик внутри карточки */
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+        }
+
+        /* АВАТАРКА ПО ЦЕНТРУ С НЕОНОМ */
+        .avatar-wrapper {
             position: relative;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            z-index: 2;
         }
 
         .avatar {
-            width: 72px;
-            height: 72px;
+            width: 85px;
+            height: 85px;
             border-radius: 50%;
             background: linear-gradient(135deg, #a78bfa 0%, #6366f1 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
+            font-size: 36px;
+            font-weight: 800;
             color: #fff;
-            border: 3px solid #fbf5b7; /* Золотая обводка */
-            box-shadow: 0 0 25px rgba(167, 139, 250, 0.6);
+            border: 4px solid var(--accent-gold); /* Золотая обводка */
+            box-shadow: 0 0 30px rgba(167, 139, 250, 0.8), 0 0 15px rgba(252, 246, 186, 0.5);
             overflow: hidden;
         }
 
@@ -171,66 +147,99 @@
             object-fit: cover;
         }
 
+        /* ОНЛАЙН СТАТУС */
+        .online-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 18px;
+            height: 18px;
+            background: #4ade80;
+            border-radius: 50%;
+            border: 3px solid #19122d;
+            box-shadow: 0 0 10px #4ade80;
+        }
+
         .user-name {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             color: #fff;
+            margin-bottom: 4px;
+            z-index: 2;
         }
 
         /* ЗВАНИЕ */
         .user-badge {
-            display: inline-block;
-            margin-top: 6px;
-            padding: 4px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 14px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
-            background: rgba(139, 92, 246, 0.2);
+            background: rgba(139, 92, 246, 0.25);
             border: 1px solid #a78bfa;
             color: #c084fc;
             letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            z-index: 2;
         }
 
         .user-id {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-bottom: 20px;
+            z-index: 2;
         }
 
-        /* СТАТИСТИКА */
-        .grid-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        /* СТАТИСТИКА ВНУТРИ КАРТОЧКИ */
+        .stats-row {
+            width: 100%;
+            display: flex;
+            gap: 12px;
+            z-index: 2;
         }
 
-        .stat-card {
-            background: rgba(10, 8, 20, 0.6);
+        .stat-item {
+            flex: 1;
+            background: rgba(10, 8, 20, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 12px;
-            border-radius: 14px;
-            text-align: center;
+            padding: 15px;
+            border-radius: 16px;
+            transition: transform 0.2s;
         }
+        
+        .stat-item:active { transform: scale(0.97); }
 
-        .stat-title {
+        .stat-label {
             font-size: 11px;
             color: var(--text-muted);
             text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
         }
 
         .stat-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: #a78bfa;
-            margin-top: 4px;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(252, 246, 186, 0.4);
         }
 
-        /* КНОПКА ПОДДЕРЖКИ И РЕФКИ */
+        /* НИЖНИЕ КНОПКИ (ВНЕ КАРТОЧКИ) */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             border: none;
-            border-radius: 14px;
+            border-radius: 16px;
             font-weight: 700;
             font-size: 14px;
             cursor: pointer;
@@ -238,51 +247,35 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 10px;
+            backdrop-filter: blur(10px);
         }
 
-        .btn-purple {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
         }
 
-        .btn-support {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #f3f4f6;
+        .btn-glass:active {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(1px);
         }
 
-        .btn:active { transform: scale(0.98); }
-
-        /* СПИСОК ТОП-50 */
-        .leader-scroll {
-            max-height: 380px;
-            overflow-y: auto;
-            padding-right: 4px;
+        /* Кнопка партнерки - более яркая */
+        .btn-partner {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid var(--border-purple);
+            color: #a78bfa;
         }
+        
+        .btn-partner:active { background: rgba(139, 92, 246, 0.3); }
 
-        .leader-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px;
-            background: rgba(10, 8, 20, 0.4);
-            border-radius: 10px;
-            margin-bottom: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-        }
-
-        .rank {
-            font-weight: 800;
-            width: 32px;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
 
+    <!-- 🌌 ФОН: МЛЕЧНЫЙ ПУТЬ -->
     <canvas id="stars-canvas"></canvas>
 
     <div class="container">
@@ -291,100 +284,52 @@
             <div class="gold-title">G00D_EXCH</div>
         </div>
 
-        <!-- Навигация -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('profile', event)">👤 Профиль</button>
-            <button class="tab-btn" onclick="switchTab('history', event)">📜 История</button>
-            <button class="tab-btn" onclick="switchTab('leaders', event)">🏆 Топ-50</button>
-            <button class="tab-btn" onclick="switchTab('ref', event)">👥 Рефка</button>
-        </div>
-
-        <!-- 1. ПРОФИЛЬ -->
-        <div id="tab-profile" class="tab-content active">
-            <div class="card">
-                <div class="profile-center">
-                    <div class="avatar-glow-wrapper">
-                        <div class="avatar" id="userAvatar">U</div>
-                    </div>
-                    <div class="user-name" id="userName">Пользователь</div>
-                    <div class="user-badge" id="userRankBadge">🌱 Новичок</div>
-                    <div class="user-id" id="userId">ID: ---</div>
-                </div>
-
-                <div class="grid-stats">
-                    <div class="stat-card">
-                        <div class="stat-title">Сделок</div>
-                        <div class="stat-value" id="totalExchanges">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-title">Оборот</div>
-                        <div class="stat-value" id="totalVolume">0 ₽</div>
-                    </div>
-                </div>
-
-                <!-- Кнопка Поддержки -->
-                <button class="btn btn-support" onclick="openSupport()" style="margin-top: 16px;">
-                    🎧 Написать в поддержку
-                </button>
+        <!-- 👤 ГЛАВНАЯ КАРТОЧКА ПРОФИЛЯ -->
+        <div class="profile-card">
+            <div class="avatar-wrapper">
+                <div class="avatar" id="userAvatar">U</div>
+                <div class="online-status"></div>
             </div>
-        </div>
+            
+            <div class="user-name" id="userName">Загрузка...</div>
+            <div class="user-badge" id="userRankBadge">🌱 Новичок</div>
+            <div class="user-id" id="userId">ID: ---</div>
 
-        <!-- 2. ИСТОРИЯ -->
-        <div id="tab-history" class="tab-content">
-            <div class="card">
-                <h3 style="margin-bottom: 12px; font-size: 15px;">Ваша история обменов</h3>
-                <div id="historyList" style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px 0;">
-                    Завершенных сделок пока нет 🚀
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-label">Сделок</div>
+                    <div class="stat-value" id="totalExchanges">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Оборот</div>
+                    <div class="stat-value" id="totalVolume">0 ₽</div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. ТОП-50 ТРЕЙДЕРОВ -->
-        <div id="tab-leaders" class="tab-content">
-            <div class="card">
-                <h3 style="margin-bottom: 14px; font-size: 15px;">Топ-50 Трейдеров 🏆</h3>
-                <div class="leader-scroll" id="top50List">
-                    <!-- Заполняется динамически из JS -->
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. РЕФЕРАЛЫ -->
-        <div id="tab-ref" class="tab-content">
-            <div class="card">
-                <h3 style="margin-bottom: 8px; font-size: 15px;">Партнерская программа</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
-                    Получайте 0.5% от суммы каждого обмена реферала!
-                </p>
-
-                <div class="grid-stats">
-                    <div class="stat-card">
-                        <div class="stat-title">Приглашено</div>
-                        <div class="stat-value" id="refCount">0 чел.</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-title">Заработано</div>
-                        <div class="stat-value" id="refIncome">0 ₽</div>
-                    </div>
-                </div>
-
-                <button class="btn btn-purple" onclick="copyRefLink()">📋 Скопировать реф. ссылку</button>
-            </div>
+        <!-- КНОПКИ ДЕЙСТВИЙ (ВНИЗУ) -->
+        <div class="action-buttons">
+            <button class="btn btn-glass" onclick="openHistory()">
+                📜 История
+            </button>
+            <button class="btn btn-glass" onclick="openTop()">
+                🏆 Топ-50
+            </button>
+            <button class="btn btn-partner" onclick="openReferral()">
+                👥 Партнерка
+            </button>
+            <button class="btn btn-glass" onclick="openSupport()">
+                🎧 Поддержка
+            </button>
         </div>
     </div>
 
     <script>
-        
-
         const tg = window.Telegram.WebApp;
-tg.ready();
-
-// Разворачиваем на весь экран (для ПК и мобилок)
-if (tg.requestFullscreen) {
-    tg.requestFullscreen(); // Новый метод Telegram API
-} else {
-    tg.expand(); // Фолбэк для старых версий
-}
+        tg.ready();
+        
+        // Разворачиваем на ПК на весь экран
+        if (tg.requestFullscreen) { tg.requestFullscreen(); } else { tg.expand(); }
 
         const urlParams = new URLSearchParams(window.location.search);
         let appData = {};
@@ -395,11 +340,11 @@ if (tg.requestFullscreen) {
 
         // Юзер данные
         const user = tg.initDataUnsafe?.user || {};
-        const firstName = user.first_name || 'Пользователь';
+        const firstName = user.first_name || 'Трейдер';
         document.getElementById('userName').innerText = firstName + (user.last_name ? ` ${user.last_name}` : '');
         document.getElementById('userId').innerText = `ID: ${user.id || 'Неизвестно'}`;
 
-        // Если у юзера есть аватарка в TG
+        // Аватарка
         const avatarEl = document.getElementById('userAvatar');
         if (user.photo_url) {
             avatarEl.innerHTML = `<img src="${user.photo_url}" alt="avatar">`;
@@ -407,111 +352,135 @@ if (tg.requestFullscreen) {
             avatarEl.innerText = firstName[0].toUpperCase();
         }
 
-        // Статистика и ЗВАНИЯ
-        if (appData.user_stats) {
-            const exCount = appData.user_stats.exchanges || 0;
-            const volume = appData.user_stats.volume || 0;
+        
 
-            document.getElementById('totalExchanges').innerText = exCount;
-            document.getElementById('totalVolume').innerText = `${volume.toLocaleString()} ₽`;
-            document.getElementById('refCount').innerText = `${appData.user_stats.refs || 0} чел.`;
-            document.getElementById('refIncome').innerText = `${appData.user_stats.ref_income || 0} ₽`;
-
-            // Расчет звания
-            const badgeEl = document.getElementById('userRankBadge');
-            if (volume >= 1000000) badgeEl.innerText = '💎 Кибер-Кит';
-            else if (volume >= 500000) badgeEl.innerText = '🔥 Акула Обмена';
-            else if (volume >= 100000) badgeEl.innerText = '⚡ Опытный Трейдер';
-            else if (volume >= 10000) badgeEl.innerText = '🚀 Любитель';
-            else badgeEl.innerText = '🌱 Новичок';
+        function getRankInfo(volume) {
+            if (volume < 10000) return { name: "Новичок I", icon: "🥉" };
+            else if (volume < 20000) return { name: "Новичок II", icon: "🥉" };
+            else if (volume < 30000) return { name: "Новичок III", icon: "🥉" };
+            else if (volume < 40000) return { name: "Новичок IV", icon: "🥉" };
+            else if (volume < 50000) return { name: "Новичок V", icon: "🥉" };
+            else if (volume < 70000) return { name: "Трейдер I", icon: "🥈" };
+            else if (volume < 90000) return { name: "Трейдер II", icon: "🥈" };
+            else if (volume < 110000) return { name: "Трейдер III", icon: "🥈" };
+            else if (volume < 130000) return { name: "Трейдер IV", icon: "🥈" };
+            else if (volume < 150000) return { name: "Трейдер V", icon: "🥈" };
+            else if (volume < 200000) return { name: "Профи I", icon: "🥇" };
+            else if (volume < 250000) return { name: "Профи II", icon: "🥇" };
+            else if (volume < 300000) return { name: "Профи III", icon: "🥇" };
+            else if (volume < 350000) return { name: "Профи IV", icon: "🥇" };
+            else if (volume < 400000) return { name: "Профи V", icon: "🥇" };
+            else if (volume < 500000) return { name: "VIP I", icon: "💎" };
+            else if (volume < 600000) return { name: "VIP II", icon: "💎" };
+            else if (volume < 700000) return { name: "VIP III", icon: "💎" };
+            else if (volume < 1000000) return { name: "VIP IV", icon: "💎" };
+            else return { name: "VIP MAX", icon: "👑" };
         }
 
-        // РЕНДЕР ТОП-50
-        const top50List = document.getElementById('top50List');
-        const leadersData = appData.top50 || [
-            {username: '@babocha', volume: 850000},
-            {username: '@crypto_king', volume: 520000},
-            {username: '@trader_pro', volume: 310000}
-        ];
+        // Применение звания в профиле
+        if (appData.user_stats) {
+            const volume = appData.user_stats.volume || 0;
+            const rank = getRankInfo(volume);
+    
+            // Вставляем иконку и название в плашку
+            document.getElementById('userRankBadge').innerHTML = `${rank.icon} ${rank.name}`;
+        }
 
-        let topHTML = '';
-        leadersData.forEach((item, idx) => {
-            let medal = `#${idx + 1}`;
-            if (idx === 0) medal = '🥇';
-            if (idx === 1) medal = '🥈';
-            if (idx === 2) medal = '🥉';
-
-            topHTML += `
-                <div class="leader-item">
-                    <div><span class="rank">${medal}</span> ${item.username}</div>
-                    <div style="font-weight: 700; color: #4ade80;">${item.volume.toLocaleString()} ₽</div>
-                </div>
-            `;
-        });
-        top50List.innerHTML = topHTML;
-
-        function switchTab(tabName, event) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-            event.currentTarget.classList.add('active');
-            document.getElementById(`tab-${tabName}`).classList.add('active');
+        // ФУНКЦИИ КНОПОК (пока просто закрываем WebApp или шлем данные, 
+        // для полноценных вкладок нужно дописывать логику)
+        function openHistory() { tg.showAlert('📜 История обменов будет доступна в следующем обновлении!'); }
+        function openTop() { tg.showAlert('🏆 Топ-50 трейдеров формируется...'); }
+        
+        function openReferral() { 
+            // Можно отправить данные боту, чтобы он прислал реф. ссылку в чат
+            tg.sendData(JSON.stringify({action: 'get_ref_link'}));
         }
 
         function openSupport() {
-            tg.openTelegramLink('https://t.me/твой_саппорт_юзернейм'); // 👈 Укажи юзернейм саппорта
-        }
-
-        function copyRefLink() {
-            const link = `https://t.me/G00D_EXCHBot?start=${user.id || 0}`;
-            navigator.clipboard.writeText(link);
-            tg.showAlert('✨ Реферальная ссылка скопирована!');
+            tg.openTelegramLink('https://t.me/твой_саппорт_юзернейм'); // 👈 ЗАМЕНИ НА РЕАЛЬНЫЙ ЮЗЕРНЕЙМ
         }
 
         // --- CANVAS МЛЕЧНЫЙ ПУТЬ ---
         const canvas = document.getElementById('stars-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
+        let nebulae = [];
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            initCosmos();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        function initCosmos() {
             stars = [];
-            for (let i = 0; i < 60; i++) {
+            nebulae = [];
+            
+            // Звезды
+            const starCount = Math.floor((canvas.width * canvas.height) / 2500);
+            for (let i = 0; i < starCount; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    size: Math.random() * 1.8,
+                    size: Math.random() * 1.5,
                     alpha: Math.random(),
-                    speed: Math.random() * 0.015 + 0.005
+                    speed: Math.random() * 0.01 + 0.002,
+                    color: ['#ffffff', '#a78bfa', '#fcf6ba'][Math.floor(Math.random() * 3)]
+                });
+            }
+
+            // Туманности (Млечный путь по диагонали)
+            for (let i = 0; i < 50; i++) {
+                const progress = Math.random();
+                const offsetX = (Math.random() - 0.5) * (canvas.width * 0.3);
+                const offsetY = (Math.random() - 0.5) * (canvas.height * 0.3);
+                nebulae.push({
+                    x: progress * canvas.width + offsetX,
+                    y: progress * canvas.height + offsetY,
+                    radius: Math.random() * 100 + 50,
+                    alpha: Math.random() * 0.08 + 0.02
                 });
             }
         }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
 
-        function drawStars() {
+        function drawCosmos() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Галактический фоновый блеск
-            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            grad.addColorStop(0, 'rgba(15, 10, 30, 1)');
-            grad.addColorStop(0.5, 'rgba(60, 20, 100, 0.3)');
-            grad.addColorStop(1, 'rgba(8, 6, 18, 1)');
-            ctx.fillStyle = grad;
+            // Фон-градиент
+            const bgGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            bgGrad.addColorStop(0, '#05040a');
+            bgGrad.addColorStop(0.5, '#100c20');
+            bgGrad.addColorStop(1, '#05040a');
+            ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            // Туманности
+            nebulae.forEach(n => {
+                const radGrad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius);
+                radGrad.addColorStop(0, `rgba(139, 92, 246, ${n.alpha})`);
+                radGrad.addColorStop(1, 'rgba(10, 8, 20, 0)');
+                ctx.fillStyle = radGrad;
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Звезды
             stars.forEach(s => {
                 s.alpha += s.speed;
                 if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
-                ctx.fillStyle = `rgba(192, 132, 252, ${Math.abs(s.alpha)})`;
+                ctx.fillStyle = s.color;
+                ctx.globalAlpha = Math.abs(s.alpha);
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
                 ctx.fill();
             });
-            requestAnimationFrame(drawStars);
+            ctx.globalAlpha = 1.0;
+            requestAnimationFrame(drawCosmos);
         }
-        drawStars();
+        resizeCanvas();
+        drawCosmos();
     </script>
 </body>
 </html>
