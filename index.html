@@ -10,6 +10,25 @@
     <title>G00D_EXCH</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        .action-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+}
+
+.action-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
         :root {
             --bg-color: #07090e;
             --card-bg: rgba(18, 24, 38, 0.75);
@@ -318,7 +337,9 @@
             </div>
 
             <!-- Единственная кнопка отправки на всём сайте -->
-            <button type="button" class="btn" onclick="submitOrder()" id="sendBtn">Создать заявку</button>
+            <button type="button" class="action-btn" id="sendBtn" onclick="submitOrder()">
+            Создать заявку
+            </button>
         </div>
 
         <!-- ================= Вкладка 3: Лидерборд ================= -->
@@ -457,48 +478,27 @@ window.submitOrder = async function() {
     const tg = window.Telegram?.WebApp;
 
     const usdtInput = document.getElementById('usdtInput');
-    const rubResult = document.getElementById('rubResult');
     const phoneEl = document.getElementById('phone') || document.getElementById('phoneInput');
     const fullNameEl = document.getElementById('fullName') || document.getElementById('fullNameInput');
     const cardEl = document.getElementById('cardNumber') || document.getElementById('cardInput');
     const bankEl = document.getElementById('bankName') || document.getElementById('bankInput');
 
     const usdtVal = usdtInput ? usdtInput.value.trim() : '0';
-    const rubVal = rubResult ? rubResult.innerText.trim() : '0 ₽';
     const phoneVal = phoneEl ? phoneEl.value.trim() : '';
     const fullNameVal = fullNameEl ? fullNameEl.value.trim() : '';
     const cardVal = cardEl ? cardEl.value.trim() : 'Не указана';
     const bankVal = bankEl ? bankEl.value.trim() : '';
 
     if (!usdtVal || usdtVal === '0' || !phoneVal || !fullNameVal || !bankVal) {
-        if (tg) {
-            tg.showAlert('⚠️ Заполните Телефон, ФИО, Банк и сумму USDT!');
-        } else {
-            alert('⚠️ Заполните все обязательные поля!');
-        }
+        if (tg) tg.showAlert('⚠️ Заполните Телефон, ФИО, Банк и сумму USDT!');
         return;
     }
 
     const user = tg?.initDataUnsafe?.user || {};
-    const userId = user.id || 'Неизвестен';
-    const userName = user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Пользователь';
-    const userUsername = user.username ? `@${user.username}` : 'нет';
-
-    const messageText = 
-        `📥 <b>НОВАЯ ЗАЯВКА НА ОБМЕН</b>\n\n` +
-        `👤 <b>Клиент:</b> ${userName} (${userUsername})\n` +
-        `🆔 <b>ID:</b> <code>${userId}</code>\n\n` +
-        `💵 <b>Отдает:</b> ${usdtVal} USDT\n` +
-        `💰 <b>К выплате:</b> ${rubVal}\n\n` +
-        `📋 <b>Реквизиты:</b>\n` +
-        `📱 <b>Тел.:</b> <code>${phoneVal}</code>\n` +
-        `👤 <b>ФИО:</b> ${fullNameVal}\n` +
-        `🏦 <b>Банк:</b> ${bankVal}\n` +
-        `💳 <b>Карта:</b> <code>${cardVal}</code>`;
-
-    // ❗️ ВСТАВЬ СВОИ ДАННЫЕ СУДА ❗️
-    const BOT_TOKEN = "ТВОЙ_НАСТОЯЩИЙ_ТОКЕН"; 
-    const ADMIN_ID = 123456789; // Твой ID цифрами (без кавычек)
+    
+    // Рассчитываем итоговые рубли на основе курса на фронте
+    const currentRate = window.appData?.rate || 98.50;
+    const rubVal = (parseFloat(usdtVal) * currentRate).toFixed(2);
 
     const btn = document.getElementById('sendBtn');
     if (btn) {
@@ -507,20 +507,24 @@ window.submitOrder = async function() {
     }
 
     try {
-        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        const response = await fetch('/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                chat_id: Number(ADMIN_ID),
-                text: messageText,
-                parse_mode: 'HTML'
+                usdt: usdtVal,
+                rub: rubVal,
+                phone: phoneVal,
+                fullName: fullNameVal,
+                cardNumber: cardVal,
+                bankName: bankVal,
+                user_id: user.id || 0,
+                user_name: user.first_name || 'Пользователь'
             })
         });
 
-        const resultData = await response.json();
-        console.log("Ответ от Telegram API:", resultData);
+        const resData = await response.json();
 
-        if (response.ok && resultData.ok) {
+        if (response.ok && resData.ok) {
             if (tg) {
                 tg.showAlert('✅ Заявка успешно создана! Оператор свяжется с вами.', () => {
                     tg.close();
@@ -529,16 +533,11 @@ window.submitOrder = async function() {
                 alert('✅ Заявка успешно создана!');
             }
         } else {
-            console.error("Telegram API Error:", resultData);
-            throw new Error(resultData.description || ' Ошибка API Telegram');
+            throw new Error(resData.error || 'Ошибка при создании заявки');
         }
     } catch (error) {
-        console.error('ПОДРОБНАЯ ОШИБКА:', error);
-        if (tg) {
-            tg.showAlert(`❌ Не удалось отправить: ${error.message || error}`);
-        } else {
-            alert('❌ Ошибка отправки заявки.');
-        }
+        console.error('Ошибка:', error);
+        if (tg) tg.showAlert(`❌ Не удалось отправить заявку: ${error.message}`);
     } finally {
         if (btn) {
             btn.disabled = false;
