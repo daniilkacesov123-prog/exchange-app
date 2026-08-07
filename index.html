@@ -444,7 +444,7 @@
 
         function copyRefLink() {
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const link = `https://t.me/Good_ExchangeBot?start=ref_${tg.initDataUnsafe.user.id}`;
+                const link = `https://t.me/G00D_EXCHBot?start=ref_${tg.initDataUnsafe.user.id}`;
                 navigator.clipboard.writeText(link).then(() => tg.showAlert('✅ Ссылка скопирована!'));
             }
         }
@@ -457,8 +457,8 @@
             rubResult.innerText = `${(usdt * appData.rate).toFixed(2)} ₽`;
         });
 
-        // 7. Обработчик единственной кнопки заявки
-        document.getElementById('sendBtn').addEventListener('click', () => {
+        // 7. Обработчик кнопки заявки для Inline WebApp
+        document.getElementById('sendBtn').addEventListener('click', async () => {
             const usdt = usdtInput.value.trim();
             const phone = document.getElementById('phone').value.trim();
             const fullName = document.getElementById('fullName').value.trim();
@@ -470,13 +470,37 @@
                 return;
             }
 
-            tg.sendData(JSON.stringify({
-                usdt, phone, fullName, bankName,
-                cardNumber: cardNumber || "Не указана",
-                rub: (parseFloat(usdt) * appData.rate).toFixed(2),
-                rate: appData.rate
-            }));
-            tg.close();
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.innerText = 'Отправка...';
+            sendBtn.disabled = true;
+
+            try {
+                // Отправляем данные на наш Python backend
+                const response = await fetch('/api/create_order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        initData: tg.initData, // Авторизация Telegram
+                        usdt, phone, fullName, bankName,
+                        cardNumber: cardNumber || "Не указана",
+                        rub: (parseFloat(usdt) * appData.rate).toFixed(2),
+                        rate: appData.rate
+                    })
+                });
+
+                if (response.ok) {
+                    tg.showAlert('✅ Заявка успешно создана!');
+                    tg.close();
+                } else {
+                    tg.showAlert('❌ Ошибка при отправке. Попробуйте еще раз.');
+                    sendBtn.innerText = 'Подать заявку';
+                    sendBtn.disabled = false;
+                }
+            } catch (e) {
+                tg.showAlert('❌ Ошибка сети!');
+                sendBtn.innerText = 'Подать заявку';
+                sendBtn.disabled = false;
+            }
         });
     </script>
 </body>
