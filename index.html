@@ -8,9 +8,8 @@
     <style>
         :root {
             --bg-dark: #05040a;
-            /* Более прозрачный фон карточек для эффекта стекла */
-            --card-glass: rgba(25, 18, 45, 0.55); 
-            --border-purple: rgba(167, 139, 250, 0.2);
+            --card-glass: rgba(20, 15, 38, 0.65);
+            --border-purple: rgba(167, 139, 250, 0.25);
             --accent-gold: #fcf6ba;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
@@ -27,7 +26,7 @@
         html, body {
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Фон не скроллится */
+            overflow: hidden;
         }
 
         body {
@@ -38,7 +37,6 @@
             align-items: center;
         }
 
-        /* 🌌 ФОН: МЛЕЧНЫЙ ПУТЬ НА CANVAS */
         #stars-canvas {
             position: fixed;
             top: 0;
@@ -49,35 +47,33 @@
             pointer-events: none;
         }
 
-        /* КОНТЕЙНЕР ДЛЯ ПК И МОБИЛОК */
         .container {
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 600px; /* Ограничиваем ширину на ПК для красоты */
+            max-width: 600px;
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 16px;
+            padding: 12px;
             box-sizing: border-box;
         }
 
-        /* 👑 ЗОЛОТОЙ ПЕРЕЛИВАЮЩИЙСЯ ЛОГОТИП */
         .brand-header {
             text-align: center;
-            padding: 10px 0 20px 0;
+            padding: 6px 0 12px 0;
             flex-shrink: 0;
         }
 
         .gold-title {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 900;
             letter-spacing: 3px;
             background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
             background-size: 200% auto;
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text; /* Кроссбраузерность */
             animation: goldShine 4s linear infinite;
             text-transform: uppercase;
             filter: drop-shadow(0 0 10px rgba(191, 149, 63, 0.6));
@@ -88,56 +84,88 @@
             100% { background-position: 200% center; }
         }
 
-        /* 👤 ОФОРМЛЕНИЕ ПРОФИЛЯ (GLASSMORPHISM) */
+        /* 🔝 ВЕРХНЕЕ МЕНЮ (КНОПКИ НАВИГАЦИИ) */
+        .top-nav {
+            display: flex;
+            gap: 6px;
+            background: rgba(15, 10, 30, 0.8);
+            border: 1px solid var(--border-purple);
+            padding: 4px;
+            border-radius: 16px;
+            backdrop-filter: blur(15px);
+            margin-bottom: 12px;
+            flex-shrink: 0;
+            overflow-x: auto;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .nav-btn.active {
+            background: rgba(167, 139, 250, 0.2);
+            color: #fff;
+            border: 1px solid var(--border-purple);
+            box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+        }
+
+        /* 📄 КОНТЕНТ ВКЛАДОК */
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 👤 ПРОФИЛЬ ПРЕМИУМ */
         .profile-card {
             background: var(--card-glass);
             border-radius: 24px;
-            padding: 25px;
+            padding: 20px;
             border: 1px solid var(--border-purple);
-            backdrop-filter: blur(20px); /* Сильное размытие фона */
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.6), inset 0 0 20px 0 rgba(167, 139, 250, 0.1);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
-        /* Блик внутри карточки */
-        .profile-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 70%);
-            pointer-events: none;
-        }
-
-        /* АВАТАРКА ПО ЦЕНТРУ С НЕОНОМ */
         .avatar-wrapper {
             position: relative;
-            margin-bottom: 16px;
-            z-index: 2;
+            margin-bottom: 12px;
         }
 
         .avatar {
-            width: 85px;
-            height: 85px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: linear-gradient(135deg, #a78bfa 0%, #6366f1 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 800;
             color: #fff;
-            border: 4px solid var(--accent-gold); /* Золотая обводка */
-            box-shadow: 0 0 30px rgba(167, 139, 250, 0.8), 0 0 15px rgba(252, 246, 186, 0.5);
+            border: 3px solid var(--accent-gold);
+            box-shadow: 0 0 25px rgba(167, 139, 250, 0.6);
             overflow: hidden;
         }
 
@@ -147,190 +175,224 @@
             object-fit: cover;
         }
 
-        /* ОНЛАЙН СТАТУС */
         .online-status {
             position: absolute;
             bottom: 2px;
             right: 2px;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             background: #4ade80;
             border-radius: 50%;
-            border: 3px solid #19122d;
-            box-shadow: 0 0 10px #4ade80;
+            border: 3px solid #100c20;
+            box-shadow: 0 0 8px #4ade80;
         }
 
         .user-name {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: #fff;
             margin-bottom: 4px;
-            z-index: 2;
         }
 
-        /* ЗВАНИЕ */
         .user-badge {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            padding: 5px 14px;
+            gap: 6px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 700;
             background: rgba(139, 92, 246, 0.25);
             border: 1px solid #a78bfa;
             color: #c084fc;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            z-index: 2;
-        }
-
-        .user-id {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            z-index: 2;
-        }
-
-        /* СТАТИСТИКА ВНУТРИ КАРТОЧКИ */
-        .stats-row {
-            width: 100%;
-            display: flex;
-            gap: 12px;
-            z-index: 2;
-        }
-
-        .stat-item {
-            flex: 1;
-            background: rgba(10, 8, 20, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 16px;
-            transition: transform 0.2s;
-        }
-        
-        .stat-item:active { transform: scale(0.97); }
-
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
             margin-bottom: 6px;
         }
 
-        .stat-value {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--accent-gold);
-            text-shadow: 0 0 10px rgba(252, 246, 186, 0.4);
+        .user-id {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
         }
 
-        /* НИЖНИЕ КНОПКИ (ВНЕ КАРТОЧКИ) */
-        .action-buttons {
+        .stats-grid {
+            width: 100%;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            flex-shrink: 0;
+            gap: 10px;
         }
 
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
+        .stat-card {
+            background: rgba(10, 8, 20, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px;
+            border-radius: 14px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--accent-gold);
+        }
+
+        /* 📋 СПИСКИ (ТОП-50, ИСТОРИЯ) */
+        .list-card {
+            background: var(--card-glass);
             border-radius: 16px;
+            border: 1px solid var(--border-purple);
+            backdrop-filter: blur(15px);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 8, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px 14px;
+            border-radius: 12px;
+        }
+
+        .list-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rank-number {
+            font-weight: 800;
+            width: 24px;
+            color: var(--text-muted);
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+            color: #fff;
             font-weight: 700;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            transition: opacity 0.2s;
         }
 
-        .btn-glass {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-        }
-
-        .btn-glass:active {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(1px);
-        }
-
-        /* Кнопка партнерки - более яркая */
-        .btn-partner {
-            background: rgba(139, 92, 246, 0.15);
-            border: 1px solid var(--border-purple);
-            color: #a78bfa;
-        }
-        
-        .btn-partner:active { background: rgba(139, 92, 246, 0.3); }
-
+        .btn-action:active { opacity: 0.8; }
     </style>
 </head>
 <body>
 
-    <!-- 🌌 ФОН: МЛЕЧНЫЙ ПУТЬ -->
     <canvas id="stars-canvas"></canvas>
 
     <div class="container">
-        <!-- Золотой заголовок -->
         <div class="brand-header">
             <div class="gold-title">G00D_EXCH</div>
         </div>
 
-        <!-- 👤 ГЛАВНАЯ КАРТОЧКА ПРОФИЛЯ -->
-        <div class="profile-card">
-            <div class="avatar-wrapper">
-                <div class="avatar" id="userAvatar">U</div>
-                <div class="online-status"></div>
-            </div>
-            
-            <div class="user-name" id="userName">Загрузка...</div>
-            <div class="user-badge" id="userRankBadge">🌱 Новичок</div>
-            <div class="user-id" id="userId">ID: ---</div>
+        <!-- 🔝 ВЕРХНЕЕ МЕНЮ -->
+        <div class="top-nav">
+            <button class="nav-btn active" onclick="switchTab('profile', this)">👤 Профиль</button>
+            <button class="nav-btn" onclick="switchTab('history', this)">📜 История</button>
+            <button class="nav-btn" onclick="switchTab('top', this)">🏆 Топ-50</button>
+            <button class="nav-btn" onclick="switchTab('ref', this)">👥 Рефка</button>
+            <button class="nav-btn" onclick="switchTab('support', this)">🎧 Поддержка</button>
+        </div>
 
-            <div class="stats-row">
-                <div class="stat-item">
-                    <div class="stat-label">Сделок</div>
-                    <div class="stat-value" id="totalExchanges">0</div>
+        <!-- 1️⃣ ВКЛАДКА: ПРОФИЛЬ -->
+        <div id="tab-profile" class="tab-content active">
+            <div class="profile-card">
+                <div class="avatar-wrapper">
+                    <div class="avatar" id="userAvatar">U</div>
+                    <div class="online-status"></div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-label">Оборот</div>
-                    <div class="stat-value" id="totalVolume">0 ₽</div>
+                <div class="user-name" id="userName">Загрузка...</div>
+                <div class="user-badge" id="userRankBadge">🥉 Новичок I</div>
+                <div class="user-id" id="userId">ID: ---</div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Сделок</div>
+                        <div class="stat-value" id="totalExchanges">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Оборот</div>
+                        <div class="stat-value" id="totalVolume">0 ₽</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- КНОПКИ ДЕЙСТВИЙ (ВНИЗУ) -->
-        <div class="action-buttons">
-            <button class="btn btn-glass" onclick="openHistory()">
-                📜 История
-            </button>
-            <button class="btn btn-glass" onclick="openTop()">
-                🏆 Топ-50
-            </button>
-            <button class="btn btn-partner" onclick="openReferral()">
-                👥 Партнерка
-            </button>
-            <button class="btn btn-glass" onclick="openSupport()">
-                🎧 Поддержка
-            </button>
+        <!-- 2️⃣ ВКЛАДКА: ИСТОРИЯ -->
+        <div id="tab-history" class="tab-content">
+            <div class="list-card" id="historyList">
+                <div style="text-align: center; color: var(--text-muted); padding: 20px;">Загрузка истории...</div>
+            </div>
         </div>
+
+        <!-- 3️⃣ ВКЛАДКА: ТОП-50 -->
+        <div id="tab-top" class="tab-content">
+            <div class="list-card" id="topList">
+                <div style="text-align: center; color: var(--text-muted); padding: 20px;">Загрузка рейтинга...</div>
+            </div>
+        </div>
+
+        <!-- 4️⃣ ВКЛАДКА: РЕФЕРАЛКА -->
+        <div id="tab-ref" class="tab-content">
+            <div class="profile-card">
+                <div style="font-size: 36px; margin-bottom: 8px;">👥</div>
+                <div class="user-name">Партнерская программа</div>
+                <div style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
+                    Получайте <b style="color: var(--accent-gold);">0.5%</b> от суммы каждого обмена вашего реферала прямо на баланс!
+                </div>
+
+                <div class="stats-grid" style="margin-bottom: 16px;">
+                    <div class="stat-card">
+                        <div class="stat-label">Рефералов</div>
+                        <div class="stat-value" id="refCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Заработано</div>
+                        <div class="stat-value" id="refIncome">0 ₽</div>
+                    </div>
+                </div>
+
+                <button class="btn-action" onclick="copyRefLink()">Скопировать реф. ссылку</button>
+            </div>
+        </div>
+
+        <!-- 5️⃣ ВКЛАДКА: ПОДДЕРЖКА -->
+        <div id="tab-support" class="tab-content">
+            <div class="profile-card">
+                <div style="font-size: 36px; margin-bottom: 8px;">🎧</div>
+                <div class="user-name">Служба Поддержки</div>
+                <div style="font-size: 13px; color: var(--text-muted); margin: 8px 0 20px 0;">
+                    Возникли вопросы по обмену или задержке? Наш оператор ответит вам в течение 2-3 минут.
+                </div>
+                <button class="btn-action" onclick="openTelegramSupport()">Написать оператору</button>
+            </div>
+        </div>
+
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
-        
-        // Разворачиваем на ПК на весь экран
-        if (tg.requestFullscreen) { tg.requestFullscreen(); } else { tg.expand(); }
+        if (tg.requestFullscreen) tg.requestFullscreen(); else tg.expand();
 
+        // Данные из URL
         const urlParams = new URLSearchParams(window.location.search);
         let appData = {};
         try {
@@ -338,13 +400,13 @@
             if (rawData) appData = JSON.parse(decodeURIComponent(rawData));
         } catch(e) {}
 
-        // Юзер данные
+        // Юзер
         const user = tg.initDataUnsafe?.user || {};
         const firstName = user.first_name || 'Трейдер';
         document.getElementById('userName').innerText = firstName + (user.last_name ? ` ${user.last_name}` : '');
-        document.getElementById('userId').innerText = `ID: ${user.id || 'Неизвестно'}`;
+        document.getElementById('userId').innerText = `ID: ${user.id || '---'}`;
 
-        // Аватарка
+        // Аватар
         const avatarEl = document.getElementById('userAvatar');
         if (user.photo_url) {
             avatarEl.innerHTML = `<img src="${user.photo_url}" alt="avatar">`;
@@ -352,135 +414,141 @@
             avatarEl.innerText = firstName[0].toUpperCase();
         }
 
-        
-
-        function getRankInfo(volume) {
-            if (volume < 10000) return { name: "Новичок I", icon: "🥉" };
-            else if (volume < 20000) return { name: "Новичок II", icon: "🥉" };
-            else if (volume < 30000) return { name: "Новичок III", icon: "🥉" };
-            else if (volume < 40000) return { name: "Новичок IV", icon: "🥉" };
-            else if (volume < 50000) return { name: "Новичок V", icon: "🥉" };
-            else if (volume < 70000) return { name: "Трейдер I", icon: "🥈" };
-            else if (volume < 90000) return { name: "Трейдер II", icon: "🥈" };
-            else if (volume < 110000) return { name: "Трейдер III", icon: "🥈" };
-            else if (volume < 130000) return { name: "Трейдер IV", icon: "🥈" };
-            else if (volume < 150000) return { name: "Трейдер V", icon: "🥈" };
-            else if (volume < 200000) return { name: "Профи I", icon: "🥇" };
-            else if (volume < 250000) return { name: "Профи II", icon: "🥇" };
-            else if (volume < 300000) return { name: "Профи III", icon: "🥇" };
-            else if (volume < 350000) return { name: "Профи IV", icon: "🥇" };
-            else if (volume < 400000) return { name: "Профи V", icon: "🥇" };
-            else if (volume < 500000) return { name: "VIP I", icon: "💎" };
-            else if (volume < 600000) return { name: "VIP II", icon: "💎" };
-            else if (volume < 700000) return { name: "VIP III", icon: "💎" };
-            else if (volume < 1000000) return { name: "VIP IV", icon: "💎" };
+        // Ранги со скрина
+        function getRankInfo(vol) {
+            if (vol < 10000) return { name: "Новичок I", icon: "🥉" };
+            else if (vol < 20000) return { name: "Новичок II", icon: "🥉" };
+            else if (vol < 30000) return { name: "Новичок III", icon: "🥉" };
+            else if (vol < 40000) return { name: "Новичок IV", icon: "🥉" };
+            else if (vol < 50000) return { name: "Новичок V", icon: "🥉" };
+            else if (vol < 70000) return { name: "Трейдер I", icon: "🥈" };
+            else if (vol < 90000) return { name: "Трейдер II", icon: "🥈" };
+            else if (vol < 110000) return { name: "Трейдер III", icon: "🥈" };
+            else if (vol < 130000) return { name: "Трейдер IV", icon: "🥈" };
+            else if (vol < 150000) return { name: "Трейдер V", icon: "🥈" };
+            else if (vol < 200000) return { name: "Профи I", icon: "🥇" };
+            else if (vol < 250000) return { name: "Профи II", icon: "🥇" };
+            else if (vol < 300000) return { name: "Профи III", icon: "🥇" };
+            else if (vol < 350000) return { name: "Профи IV", icon: "🥇" };
+            else if (vol < 400000) return { name: "Профи V", icon: "🥇" };
+            else if (vol < 500000) return { name: "VIP I", icon: "💎" };
+            else if (vol < 600000) return { name: "VIP II", icon: "💎" };
+            else if (vol < 700000) return { name: "VIP III", icon: "💎" };
+            else if (vol < 1000000) return { name: "VIP IV", icon: "💎" };
             else return { name: "VIP MAX", icon: "👑" };
         }
 
-        // Применение звания в профиле
+        // Заполнение профиля
         if (appData.user_stats) {
-            const volume = appData.user_stats.volume || 0;
-            const rank = getRankInfo(volume);
-    
-            // Вставляем иконку и название в плашку
-            document.getElementById('userRankBadge').innerHTML = `${rank.icon} ${rank.name}`;
+            const vol = appData.user_stats.volume || 0;
+            const ex = appData.user_stats.exchanges || 0;
+            document.getElementById('totalExchanges').innerText = ex;
+            document.getElementById('totalVolume').innerText = `${vol.toLocaleString('ru-RU')} ₽`;
+            
+            const r = getRankInfo(vol);
+            document.getElementById('userRankBadge').innerHTML = `${r.icon} ${r.name}`;
+
+            document.getElementById('refCount').innerText = appData.user_stats.ref_count || 0;
+            document.getElementById('refIncome').innerText = `${(appData.user_stats.ref_income || 0).toFixed(2)} ₽`;
         }
 
-        // ФУНКЦИИ КНОПОК (пока просто закрываем WebApp или шлем данные, 
-        // для полноценных вкладок нужно дописывать логику)
-        function openHistory() { tg.showAlert('📜 История обменов будет доступна в следующем обновлении!'); }
-        function openTop() { tg.showAlert('🏆 Топ-50 трейдеров формируется...'); }
-        
-        function openReferral() { 
-            // Можно отправить данные боту, чтобы он прислал реф. ссылку в чат
-            tg.sendData(JSON.stringify({action: 'get_ref_link'}));
+        // РЕНДЕР ТОП-50
+        const topContainer = document.getElementById('topList');
+        if (appData.top50 && appData.top50.length > 0) {
+            topContainer.innerHTML = appData.top50.map((item, index) => {
+                let badge = `${index + 1}`;
+                if (index === 0) badge = '🥇';
+                if (index === 1) badge = '🥈';
+                if (index === 2) badge = '🥉';
+
+                return `
+                    <div class="list-item">
+                        <div class="list-left">
+                            <span class="rank-number">${badge}</span>
+                            <span style="font-weight: 600;">@${item.username}</span>
+                        </div>
+                        <span style="font-weight: 800; color: var(--accent-gold);">${item.volume.toLocaleString('ru-RU')} ₽</span>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            topContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 15px;">Список лидеров пока пуст</div>';
         }
 
-        function openSupport() {
-            tg.openTelegramLink('https://t.me/твой_саппорт_юзернейм'); // 👈 ЗАМЕНИ НА РЕАЛЬНЫЙ ЮЗЕРНЕЙМ
+        // РЕНДЕР ИСТОРИИ
+        const historyContainer = document.getElementById('historyList');
+        if (appData.history && appData.history.length > 0) {
+            historyContainer.innerHTML = appData.history.map(h => `
+                <div class="list-item">
+                    <div class="list-left">
+                        <span style="font-size: 18px;">💱</span>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700;">${h.usdt} USDT</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">${h.date}</div>
+                        </div>
+                    </div>
+                    <span style="font-weight: 800; color: #4ade80;">+${h.rub.toLocaleString('ru-RU')} ₽</span>
+                </div>
+            `).join('');
+        } else {
+            historyContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">У вас пока нет выполненных обменов</div>';
         }
 
-        // --- CANVAS МЛЕЧНЫЙ ПУТЬ ---
+        // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+        function switchTab(tabName, btn) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            btn.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        function copyRefLink() {
+            const link = `https://t.me/G00D_EXCHBot?start=${user.id || 0}`;
+            navigator.clipboard.writeText(link);
+            tg.showAlert('✅ Реферальная ссылка скопирована!');
+        }
+
+        function openTelegramSupport() {
+            tg.openTelegramLink('https://t.me/babocha'); // Юзернейм поддержки
+        }
+
+        // МЛЕЧНЫЙ ПУТЬ CANVAS
         const canvas = document.getElementById('stars-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
-        let nebulae = [];
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            initCosmos();
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        function initCosmos() {
             stars = [];
-            nebulae = [];
-            
-            // Звезды
-            const starCount = Math.floor((canvas.width * canvas.height) / 2500);
-            for (let i = 0; i < starCount; i++) {
+            for (let i = 0; i < 150; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     size: Math.random() * 1.5,
                     alpha: Math.random(),
-                    speed: Math.random() * 0.01 + 0.002,
-                    color: ['#ffffff', '#a78bfa', '#fcf6ba'][Math.floor(Math.random() * 3)]
-                });
-            }
-
-            // Туманности (Млечный путь по диагонали)
-            for (let i = 0; i < 50; i++) {
-                const progress = Math.random();
-                const offsetX = (Math.random() - 0.5) * (canvas.width * 0.3);
-                const offsetY = (Math.random() - 0.5) * (canvas.height * 0.3);
-                nebulae.push({
-                    x: progress * canvas.width + offsetX,
-                    y: progress * canvas.height + offsetY,
-                    radius: Math.random() * 100 + 50,
-                    alpha: Math.random() * 0.08 + 0.02
+                    speed: Math.random() * 0.01 + 0.002
                 });
             }
         }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        function drawCosmos() {
+        function drawStars() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Фон-градиент
-            const bgGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            bgGrad.addColorStop(0, '#05040a');
-            bgGrad.addColorStop(0.5, '#100c20');
-            bgGrad.addColorStop(1, '#05040a');
-            ctx.fillStyle = bgGrad;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Туманности
-            nebulae.forEach(n => {
-                const radGrad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius);
-                radGrad.addColorStop(0, `rgba(139, 92, 246, ${n.alpha})`);
-                radGrad.addColorStop(1, 'rgba(10, 8, 20, 0)');
-                ctx.fillStyle = radGrad;
-                ctx.beginPath();
-                ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Звезды
             stars.forEach(s => {
                 s.alpha += s.speed;
                 if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
-                ctx.fillStyle = s.color;
+                ctx.fillStyle = '#a78bfa';
                 ctx.globalAlpha = Math.abs(s.alpha);
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
                 ctx.fill();
             });
-            ctx.globalAlpha = 1.0;
-            requestAnimationFrame(drawCosmos);
+            requestAnimationFrame(drawStars);
         }
-        resizeCanvas();
-        drawCosmos();
+        drawStars();
     </script>
 </body>
 </html>
