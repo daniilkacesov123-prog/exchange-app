@@ -84,7 +84,7 @@
             100% { background-position: 200% center; }
         }
 
-        /* 🔝 ВЕРХНЕЕ МЕНЮ (КНОПКИ НАВИГАЦИИ) */
+        /* ВЕРХНЕЕ МЕНЮ */
         .top-nav {
             display: flex;
             gap: 6px;
@@ -120,7 +120,7 @@
             box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
         }
 
-        /* 📄 КОНТЕНТ ВКЛАДОК */
+        /* ВКЛАДКИ */
         .tab-content {
             display: none;
             flex: 1;
@@ -133,7 +133,7 @@
             flex-direction: column;
         }
 
-        /* 👤 ПРОФИЛЬ ПРЕМИУМ */
+        /* ПРОФИЛЬ */
         .profile-card {
             background: var(--card-glass);
             border-radius: 24px;
@@ -219,6 +219,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+            margin-bottom: 16px;
         }
 
         .stat-card {
@@ -237,12 +238,32 @@
         }
 
         .stat-value {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             color: var(--accent-gold);
         }
 
-        /* 📋 СПИСКИ (ТОП-50, ИСТОРИЯ) */
+        /* БЛОК ОБЩЕЙ СТАТИСТИКИ БОТА */
+        .global-stats {
+            width: 100%;
+            background: rgba(15, 10, 30, 0.5);
+            border: 1px dashed var(--border-purple);
+            padding: 12px;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .global-stats span {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        /* СПИСКИ */
         .list-card {
             background: var(--card-glass);
             border-radius: 16px;
@@ -322,15 +343,30 @@
                 <div class="user-badge" id="userRankBadge">🥉 Новичок I</div>
                 <div class="user-id" id="userId">ID: ---</div>
 
+                <!-- СТАТИСТИКА ЮЗЕРА (4 КАРТОЧКИ) -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-label">Сделок</div>
                         <div class="stat-value" id="totalExchanges">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Оборот</div>
+                        <div class="stat-label">Весь оборот</div>
                         <div class="stat-value" id="totalVolume">0 ₽</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Оборот 24ч</div>
+                        <div class="stat-value" id="volume24h">0 ₽</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Рефералы</div>
+                        <div class="stat-value" id="refCountProfile">0 чел</div>
+                    </div>
+                </div>
+
+                <!-- ОБЩАЯ СТАТИСТИКА БОТА -->
+                <div class="global-stats">
+                    <div>Всего в боте: <span id="globalUsers">0</span> пользователей</div>
+                    <div>Общий оборот бота: <span id="globalVolume">0 ₽</span> (<span id="globalExchanges">0</span> обменов)</div>
                 </div>
             </div>
         </div>
@@ -414,7 +450,7 @@
             avatarEl.innerText = firstName[0].toUpperCase();
         }
 
-        // Ранги со скрина
+        // Ранги со скрина (без изменений)
         function getRankInfo(vol) {
             if (vol < 10000) return { name: "Новичок I", icon: "🥉" };
             else if (vol < 20000) return { name: "Новичок II", icon: "🥉" };
@@ -441,15 +477,27 @@
         // Заполнение профиля
         if (appData.user_stats) {
             const vol = appData.user_stats.volume || 0;
+            const vol24 = appData.user_stats.volume_24h || 0;
             const ex = appData.user_stats.exchanges || 0;
+            const refCount = appData.user_stats.ref_count || 0;
+
             document.getElementById('totalExchanges').innerText = ex;
             document.getElementById('totalVolume').innerText = `${vol.toLocaleString('ru-RU')} ₽`;
-            
+            document.getElementById('volume24h').innerText = `${vol24.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('refCountProfile').innerText = `${refCount} чел`;
+
             const r = getRankInfo(vol);
             document.getElementById('userRankBadge').innerHTML = `${r.icon} ${r.name}`;
 
-            document.getElementById('refCount').innerText = appData.user_stats.ref_count || 0;
+            document.getElementById('refCount').innerText = refCount;
             document.getElementById('refIncome').innerText = `${(appData.user_stats.ref_income || 0).toFixed(2)} ₽`;
+        }
+
+        // Заполнение общей статистики бота
+        if (appData.global_stats) {
+            document.getElementById('globalUsers').innerText = appData.global_stats.total_users.toLocaleString('ru-RU');
+            document.getElementById('globalVolume').innerText = `${appData.global_stats.total_volume.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('globalExchanges').innerText = appData.global_stats.total_exchanges.toLocaleString('ru-RU');
         }
 
         // РЕНДЕР ТОП-50
@@ -510,10 +558,10 @@
         }
 
         function openTelegramSupport() {
-            tg.openTelegramLink('https://t.me/babocha'); // Юзернейм поддержки
+            tg.openTelegramLink('https://t.me/babocha');
         }
 
-        // МЛЕЧНЫЙ ПУТЬ CANVAS
+        // CANVAS МЛЕЧНЫЙ ПУТЬ
         const canvas = document.getElementById('stars-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
