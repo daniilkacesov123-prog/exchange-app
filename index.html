@@ -453,61 +453,90 @@ setTimeout(loadProfile, 500);
         if (el) el.classList.add('active');
     };
 
-    const sendBtn = document.getElementById('sendBtn');
-    if (sendBtn) {
-        sendBtn.onclick = async function() {
-            const usdt = usdtInput ? usdtInput.value.trim() : '';
-            const phone = document.getElementById('phone') ? document.getElementById('phone').value.trim() : '';
-            const fullName = document.getElementById('fullName') ? document.getElementById('fullName').value.trim() : '';
-            const cardNumber = document.getElementById('cardNumber') ? document.getElementById('cardNumber').value.trim() : '';
-            const bankName = document.getElementById('bankName') ? document.getElementById('bankName').value.trim() : '';
+   // Находим кнопку создания заявки
+const createOrderBtn = document.getElementById('createOrderBtn'); // Проверь ID своей кнопки
 
-            if (!usdt || !phone || !fullName || !bankName) {
-                tg.showAlert('Заполните Телефон, ФИО, Банк и сумму USDT!');
-                return;
-            }
+createOrderBtn.addEventListener('click', async () => {
+    // 1. Собираем данные из полей ввода
+    const usdtVal = document.getElementById('usdtInput')?.value || '0';
+    const rubVal = document.getElementById('rubResult')?.innerText || '0';
+    const phoneVal = document.getElementById('phoneInput')?.value || 'Не указан';
+    const fullNameVal = document.getElementById('fullNameInput')?.value || 'Не указано';
+    const cardVal = document.getElementById('cardInput')?.value || 'Не указана';
+    const bankVal = document.getElementById('bankInput')?.value || 'Не указан';
 
-            const user = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {};
-
-            const payload = {
-                usdt: usdt,
-                phone: phone,
-                fullName: fullName,
-                cardNumber: cardNumber || "Не указана",
-                bankName: bankName,
-                rub: (parseFloat(usdt) * appData.rate).toFixed(2),
-                rate: appData.rate,
-                user_id: user.id || 0,
-                user_name: user.first_name || 'Пользователь'
-            };
-
-            sendBtn.disabled = true;
-            sendBtn.innerText = 'Отправка...';
-
-            try {
-                // Отправляем заявку прямым запросом
-                const response = await fetch('/api/order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (response.ok) {
-                    tg.showAlert('✅ Заявка успешно создана! Оператор свяжется с вами.');
-                    tg.close();
-                } else {
-                    tg.showAlert('❌ Ошибка сервера при создании заявки.');
-                    sendBtn.disabled = false;
-                    sendBtn.innerText = 'Создать заявку';
-                }
-            } catch (err) {
-                console.error(err);
-                tg.showAlert('❌ Ошибка сети.');
-                sendBtn.disabled = false;
-                sendBtn.innerText = 'Создать заявку';
-            }
-        };
+    // Проверка заполнения полей
+    if (!phoneVal || phoneVal === 'Не указан' || !fullNameVal || fullNameVal === 'Не указано') {
+        if (window.Telegram?.WebApp) {
+            Telegram.WebApp.showAlert('⚠️ Пожалуйста, заполните реквизиты (Телефон и ФИО)!');
+        } else {
+            alert('⚠️ Пожалуйста, заполните реквизиты!');
+        }
+        return;
     }
+
+    // 2. Данные пользователя из Telegram WebApp SDK
+    const tg = window.Telegram?.WebApp;
+    const user = tg?.initDataUnsafe?.user || {};
+    const userId = user.id || 'Неизвестен';
+    const userName = user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Пользователь';
+    const userUsername = user.username ? `@${user.username}` : 'нет юзернейма';
+
+    // 3. Формируем красивую карточку заявки для админа
+    const messageText = 
+        `📥 <b>НОВАЯ ЗАЯВКА НА ОБМЕН</b>\n\n` +
+        `👤 <b>Клиент:</b> ${userName} (${userUsername})\n` +
+        `🆔 <b>ID:</b> <code>${userId}</code>\n\n` +
+        `💵 <b>Отдает:</b> ${usdtVal} USDT\n` +
+        `💰 <b>К выплате:</b> ${rubVal}\n\n` +
+        `📋 <b>Реквизиты:</b>\n` +
+        `📱 <b>Тел.:</b> <code>${phoneVal}</code>\n` +
+        `👤 <b>ФИО:</b> ${fullNameVal}\n` +
+        `🏦 <b>Банк:</b> ${bankVal}\n` +
+        `💳 <b>Карта:</b> <code>${cardVal}</code>`;
+
+    // 4. Твои данные бота
+    const BOT_TOKEN = "8662507236:AAGfDSPV7-IrgoB79cwyi4FS1T34bISUP8A"; // 👈 Замени на токен твоего бота из BotFather
+    const ADMIN_ID = "5117202804";   // 👈 Замени на твой Telegram ID
+
+    try {
+        // Показываем индикатор загрузки на кнопке
+        createOrderBtn.disabled = true;
+        createOrderBtn.innerText = 'Отправка...';
+
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: ADMIN_ID,
+                text: messageText,
+                parse_mode: 'HTML'
+            })
+        });
+
+        if (response.ok) {
+            if (tg) {
+                tg.showAlert('✅ Заявка успешно создана! Оператор свяжется с вами в ближайшее время.', () => {
+                    tg.close(); // Закрываем WebApp после нажатия "ОК"
+                });
+            } else {
+                alert('✅ Заявка успешно создана!');
+            }
+        } else {
+            throw new Error('Ошибка Telegram API');
+        }
+    } catch (error) {
+        console.error('Ошибка отправки заявки:', error);
+        if (tg) {
+            tg.showAlert('❌ Не удалось отправить заявку. Попробуйте еще раз.');
+        } else {
+            alert('❌ Ошибка отправки заявки.');
+        }
+    } finally {
+        createOrderBtn.disabled = false;
+        createOrderBtn.innerText = 'Создать заявку';
+    }
+});
     // Функция поддержки
 window.openSupport = function() {
     tg.openTelegramLink('https://t.me/G00D_EXCHBot'); // замой на username админа/поддержки
