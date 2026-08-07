@@ -453,32 +453,48 @@
             rubResult.innerText = `${(usdt * appData.rate).toFixed(2)} ₽`;
         });
 
-        // 7. Обработчик кнопки заявки
-        document.getElementById('sendBtn').addEventListener('click', () => {
-            const usdt = usdtInput.value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const fullName = document.getElementById('fullName').value.trim();
-            const cardNumber = document.getElementById('cardNumber').value.trim();
-            const bankName = document.getElementById('bankName').value.trim();
+        // 7. Обработчик кнопки отправки заявки
+        document.getElementById('sendBtn').addEventListener('click', function () {
+            try {
+                const usdtInput = document.getElementById('usdtInput');
+                const phoneInput = document.getElementById('phone');
+                const nameInput = document.getElementById('fullName');
+                const cardInput = document.getElementById('cardNumber');
+                const bankInput = document.getElementById('bankName');
 
-            if (!usdt || !phone || !fullName || !bankName) {
-                tg.showAlert('Заполните Телефон, ФИО и Банк!');
-                return;
+                const usdt = usdtInput ? usdtInput.value.trim() : '';
+                const phone = phoneInput ? phoneInput.value.trim() : '';
+                const fullName = nameInput ? nameInput.value.trim() : '';
+                const cardNumber = cardInput ? cardInput.value.trim() : '';
+                const bankName = bankInput ? bankInput.value.trim() : '';
+
+                // Проверка заполнения обязательных полей
+                if (!usdt || !phone || !fullName || !bankName) {
+                    tg.showAlert('Заполните Телефон, ФИО, Банк и сумму USDT!');
+                    return;
+                }
+
+                // Берем курс из appData (или 98.5 по умолчанию)
+                const currentRate = (appData && appData.rate) ? appData.rate : 98.50;
+                const rubCalculated = (parseFloat(usdt) * currentRate).toFixed(2);
+
+                // Формируем payload
+                const payload = {
+                    usdt: usdt,
+                    phone: phone,
+                    fullName: fullName,
+                    cardNumber: cardNumber || "Не указана",
+                    bankName: bankName,
+                    rub: rubCalculated,
+                    rate: currentRate
+                };
+
+                // Отправляем данные в бота и закрываем WebApp
+                tg.sendData(JSON.stringify(payload));
+
+            } catch (err) {
+                alert("Ошибка в JS: " + err.message);
             }
-
-            // Формируем payload
-            const payload = {
-                usdt: usdt,
-                phone: phone,
-                fullName: fullName,
-                cardNumber: cardNumber || "Не указана",
-                bankName: bankName,
-                rub: (parseFloat(usdt) * appData.rate).toFixed(2),
-                rate: appData.rate
-            };
-
-            // Отправляем прямо через Telegram API
-            tg.sendData(JSON.stringify(payload));
         });
     </script>
 </body>
