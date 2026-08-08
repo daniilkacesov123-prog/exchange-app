@@ -297,96 +297,95 @@
             <div class="gold-title">G00D_EXCH</div>
         </div>
 
-        <!-- 🔝 ВЕРХНЕЕ МЕНЮ НАВИГАЦИИ -->
         <div class="top-nav">
-            <button class="nav-btn active" onclick="switchTab('exchange', this)">💱 Обмен</button>
-            <button class="nav-btn" onclick="switchTab('profile', this)">👤 Профиль</button>
+            <button class="nav-btn active" onclick="switchTab('profile', this)">👤 Профиль</button>
+            <button class="nav-btn" onclick="switchTab('exchange', this)">💱 Обмен</button>
             <button class="nav-btn" onclick="switchTab('history', this)">📜 История</button>
             <button class="nav-btn" onclick="switchTab('top', this)">🏆 Топ-50</button>
             <button class="nav-btn" onclick="switchTab('ref', this)">👥 Рефка</button>
             <button class="nav-btn" onclick="switchTab('support', this)">🎧 Поддержка</button>
         </div>
 
-        <!-- 1️⃣ ВКЛАДКА: ОБМЕН (ПЕРВАЯ ПРИ ОТКРЫТИИ) -->
-        <div id="tab-exchange" class="tab-content active">
-            <div class="glass-card">
-                <h3 style="margin-bottom: 14px; text-align: center;">Оформление сделки</h3>
-                
-                <div class="input-group">
-                    <label class="input-label">Отдаёте (USDT):</label>
-                    <input type="number" id="usdtInput" class="custom-input" placeholder="например: 100" oninput="calcRub()">
-                </div>
+        <!-- 1️⃣ ВКЛАДКА: ОБМЕН (ТЕПЕРЬ ВТОРАЯ) -->
+<div id="tab-exchange" class="tab-content">
+    <div class="glass-card">
+        <h3 style="margin-bottom: 14px; text-align: center;">Оформление сделки</h3>
+        
+        <div class="input-group">
+            <label class="input-label">Отдаёте (USDT):</label>
+            <input type="number" id="usdtInput" class="custom-input" placeholder="например: 100" oninput="calcRub()">
+        </div>
 
-                <div class="input-group">
-                    <label class="input-label">Получаете (Рубли):</label>
-                    <input type="text" id="rubInput" class="custom-input" readonly placeholder="0 ₽">
-                </div>
+        <div class="input-group">
+            <label class="input-label">Получаете (Рубли):</label>
+            <input type="text" id="rubInput" class="custom-input" readonly placeholder="0 ₽">
+        </div>
 
-                <div class="input-group">
-                    <label class="input-label">Ваш номер телефона:</label>
-                    <input type="tel" id="phoneInput" class="custom-input" placeholder="+7 (999) 000-00-00">
-                </div>
+        <div class="input-group">
+            <label class="input-label">Ваш номер телефона:</label>
+            <input type="tel" id="phoneInput" class="custom-input" placeholder="+7 (999) 000-00-00">
+        </div>
 
-                <div class="input-group">
-                    <label class="input-label">ФИО получателя:</label>
-                    <input type="text" id="nameInput" class="custom-input" placeholder="Иванов И. И.">
-                </div>
+        <div class="input-group">
+            <label class="input-label">ФИО получателя:</label>
+            <input type="text" id="nameInput" class="custom-input" placeholder="Иванов И. И.">
+        </div>
 
-                <div class="input-group">
-                    <label class="input-label">Выберите банк:</label>
-                    <select id="bankSelect" class="custom-select">
-                        <option value="Сбербанк">Сбербанк</option>
-                        <option value="Т-Банк (Тинькофф)">Т-Банк (Тинькофф)</option>
-                        <option value="СБП (Система Быстрых Платежей)">СБП</option>
-                        <option value="Альфа-Банк">Альфа-Банк</option>
-                        <option value="ВТБ">ВТБ</option>
-                    </select>
-                </div>
+        <div class="input-group">
+            <label class="input-label">Выберите банк:</label>
+            <select id="bankSelect" class="custom-select">
+                <option value="Сбербанк">Сбербанк</option>
+                <option value="Т-Банк (Тинькофф)">Т-Банк (Тинькофф)</option>
+                <option value="СБП (Система Быстрых Платежей)">СБП</option>
+                <option value="Альфа-Банк">Альфа-Банк</option>
+                <option value="ВТБ">ВТБ</option>
+            </select>
+        </div>
 
-                <div class="input-group">
-                    <label class="input-label">Номер карты / СБП:</label>
-                    <input type="text" id="cardInput" class="custom-input" placeholder="2202 .... .... ....">
-                </div>
+        <div class="input-group">
+            <label class="input-label">Номер карты / СБП:</label>
+            <input type="text" id="cardInput" class="custom-input" placeholder="2202 .... .... ....">
+        </div>
 
-                <button class="btn-action" onclick="submitOrder()" style="margin-top: 8px;">Создать заявку</button>
+        <button class="btn-action" onclick="submitOrder()" style="margin-top: 8px;">Оформить сделку с оператором</button>
+    </div>
+</div>
+
+<!-- 2️⃣ ВКЛАДКА: ПРОФИЛЬ (ТЕПЕРЬ ПЕРВАЯ / АКТИВНАЯ) -->
+<div id="tab-profile" class="tab-content active">
+    <div class="glass-card">
+        <div class="avatar-wrapper">
+            <div class="avatar" id="userAvatar">U</div>
+        </div>
+        <div class="user-name" id="userName">Загрузка...</div>
+        <div class="user-badge" id="userRankBadge">🥉 Новичок I</div>
+        <div class="user-id" id="userId">ID: ---</div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Сделок</div>
+                <div class="stat-value" id="totalExchanges">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Весь оборот</div>
+                <div class="stat-value" id="totalVolume">0 ₽</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Оборот 24ч</div>
+                <div class="stat-value" id="volume24h">0 ₽</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Рефералы</div>
+                <div class="stat-value" id="refCountProfile">0 чел</div>
             </div>
         </div>
 
-        <!-- 2️⃣ ВКЛАДКА: ПРОФИЛЬ -->
-        <div id="tab-profile" class="tab-content">
-            <div class="glass-card">
-                <div class="avatar-wrapper">
-                    <div class="avatar" id="userAvatar">U</div>
-                </div>
-                <div class="user-name" id="userName">Загрузка...</div>
-                <div class="user-badge" id="userRankBadge">🥉 Новичок I</div>
-                <div class="user-id" id="userId">ID: ---</div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Сделок</div>
-                        <div class="stat-value" id="totalExchanges">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Весь оборот</div>
-                        <div class="stat-value" id="totalVolume">0 ₽</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Оборот 24ч</div>
-                        <div class="stat-value" id="volume24h">0 ₽</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Рефералы</div>
-                        <div class="stat-value" id="refCountProfile">0 чел</div>
-                    </div>
-                </div>
-
-                <div class="global-stats">
-                    <div>Всего в боте: <span id="globalUsers">0</span> пользователей</div>
-                    <div>Общий оборот бота: <span id="globalVolume">0 ₽</span> (<span id="globalExchanges">0</span> обменов)</div>
-                </div>
-            </div>
+        <div class="global-stats">
+            <div>Всего в боте: <span id="globalUsers">0</span> пользователей</div>
+            <div>Общий оборот бота: <span id="globalVolume">0 ₽</span> (<span id="globalExchanges">0</span> обменов)</div>
         </div>
+    </div>
+</div>
 
         <!-- 3️⃣ ВКЛАДКА: ИСТОРИЯ -->
         <div id="tab-history" class="tab-content">
