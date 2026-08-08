@@ -468,47 +468,27 @@ function submitOrder() {
     const bankName = document.getElementById('bankSelect').value;
     const cardNumber = document.getElementById('cardInput').value;
 
-    if (!usdt || usdt <= 0) { 
-        tg.showAlert('Введите сумму USDT'); 
-        return; 
-    }
-    if (!phone || !cardNumber) { 
-        tg.showAlert('Заполните телефон и номер карты!'); 
-        return; 
-    }
+    if (!usdt || usdt <= 0) { tg.showAlert('Введите сумму USDT'); return; }
+    if (!phone || !cardNumber) { tg.showAlert('Заполните телефон и карту!'); return; }
 
     const rub = (usdt * currentRate).toFixed(2);
 
-    // 📋 Формируем красивый текст заявки
-    const orderText = 
-`🧾 *ЗАЯВКА НА ОБМЕН #G00D*
+    const orderObj = {
+        u: usdt,
+        r: rub,
+        p: phone,
+        fn: fullName,
+        b: bankName,
+        c: cardNumber
+    };
 
-💵 *Сумма:* ${usdt} USDT (${rub} ₽)
-📱 *Телефон:* ${phone}
-👤 *ФИО:* ${fullName || 'Не указано'}
-🏦 *Банк:* ${bankName}
-💳 *Реквизиты:* \`${cardNumber}\``;
+    // Кодируем объект
+    const jsonStr = JSON.stringify(orderObj);
+    const encodedData = btoa(encodeURIComponent(jsonStr));
 
-    // 1. Копируем текст заявки в буфер обмена
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(orderText);
-    }
-
-    // 2. Показываем человеку понятную плашку
-    tg.showPopup({
-        title: "Заявка сформирована! 🎉",
-        message: "Детали обмена скопированы в буфер. Нажмите «Перейти к оператору» и отправьте сообщение в чат.",
-        buttons: [
-            { id: "go", type: "ok", text: "💬 К оператору" },
-            { id: "cancel", type: "cancel", text: "Отмена" }
-        ]
-    }, function(buttonId) {
-        if (buttonId === "go") {
-            // Перебрасываем сразу в ЛС к оператору
-            tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
-            tg.close();
-        }
-    });
+    tg.close();
+    // Отправляем команду боту
+    tg.openTelegramLink(`https://t.me/G00D_EXCHBot?start=order_${encodedData}`);
 }
 
         // Юзер
