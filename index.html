@@ -469,17 +469,25 @@
     if (!usdt || usdt <= 0) { tg.showAlert('Введите сумму USDT'); return; }
     if (!phone || !cardNumber) { tg.showAlert('Заполните телефон и карту!'); return; }
 
-    const payload = {
-        usdt: usdt,
-        rub: (usdt * currentRate).toFixed(2),
-        phone: phone,
-        fullName: fullName,
-        bankName: bankName,
-        cardNumber: cardNumber
+    const rub = (usdt * currentRate).toFixed(2);
+
+    // Собираем объект заявки
+    const orderObj = {
+        u: usdt,
+        r: rub,
+        p: phone,
+        fn: fullName,
+        b: bankName,
+        c: cardNumber
     };
 
-    // Отправляем штатно в aiogram через Telegram WebApp API
-    tg.sendData(JSON.stringify(payload));
+    // Кодируем в base64, чтобы передать через URL
+    const jsonStr = JSON.stringify(orderObj);
+    const encodedData = btoa(encodeURIComponent(jsonStr));
+
+    // Закрываем WebApp и отправляем данные прямо в чат с ботом
+    tg.close();
+    tg.openTelegramLink(`https://t.me/G00D_EXCHBot?start=order_${encodedData}`);
 }
 
         // Юзер
