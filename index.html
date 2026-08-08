@@ -458,7 +458,7 @@
             document.getElementById('rubInput').value = `${(usdt * currentRate).toFixed(2)} ₽`;
         }
 
-       // Юзернейм оператора (без @)
+// Укажи юзернейм оператора (БЕЗ символа @)
 const OPERATOR_USERNAME = "Babocha_nerd"; 
 
 function submitOrder() {
@@ -468,27 +468,47 @@ function submitOrder() {
     const bankName = document.getElementById('bankSelect').value;
     const cardNumber = document.getElementById('cardInput').value;
 
-    if (!usdt || usdt <= 0) { tg.showAlert('Введите сумму USDT'); return; }
-    if (!phone || !cardNumber) { tg.showAlert('Заполните телефон и карту!'); return; }
+    if (!usdt || usdt <= 0) { 
+        tg.showAlert('Введите сумму USDT'); 
+        return; 
+    }
+    if (!phone || !cardNumber) { 
+        tg.showAlert('Заполните телефон и номер карты!'); 
+        return; 
+    }
 
     const rub = (usdt * currentRate).toFixed(2);
 
-    const orderObj = {
-        u: usdt,
-        r: rub,
-        p: phone,
-        fn: fullName,
-        b: bankName,
-        c: cardNumber
-    };
+    // 📋 Формируем чек заявки
+    const orderText = 
+`🧾 ЗАЯВКА НА ОБМЕН #G00D
 
-    // Кодируем объект
-    const jsonStr = JSON.stringify(orderObj);
-    const encodedData = btoa(encodeURIComponent(jsonStr));
+💵 Сумма: ${usdt} USDT (${rub} ₽)
+📱 Телефон: ${phone}
+👤 ФИО: ${fullName || 'Не указано'}
+🏦 Банк: ${bankName}
+💳 Реквизиты: ${cardNumber}`;
 
-    tg.close();
-    // Отправляем команду боту
-    tg.openTelegramLink(`https://t.me/G00D_EXCHBot?start=order_${encodedData}`);
+    // 1. Копируем текст заявки в буфер обмена
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(orderText);
+    }
+
+    // 2. Всплывающее окно и редирект в ЛС к оператору
+    tg.showPopup({
+        title: "Заявка сформирована! 🎉",
+        message: "Детали обмена скопированы в буфер. Нажмите «Перейти к оператору» и отправьте сообщение в чат.",
+        buttons: [
+            { id: "go", type: "ok", text: "💬 К оператору" },
+            { id: "cancel", type: "cancel", text: "Отмена" }
+        ]
+    }, function(buttonId) {
+        if (buttonId === "go") {
+            // Открывает напрямую ЛС с оператором
+            tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
+            tg.close();
+        }
+    });
 }
 
         // Юзер
