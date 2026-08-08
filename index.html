@@ -459,45 +459,57 @@
             document.getElementById('rubInput').value = `${(usdt * currentRate).toFixed(2)} ₽`;
         }
 
-       async function submitOrder() {
+       // Юзернейм оператора (без @)
+const OPERATOR_USERNAME = "Babocha_nerd"; 
+
+function submitOrder() {
     const usdt = document.getElementById('usdtInput').value;
     const phone = document.getElementById('phoneInput').value;
     const fullName = document.getElementById('nameInput').value;
     const bankName = document.getElementById('bankSelect').value;
     const cardNumber = document.getElementById('cardInput').value;
 
-    if (!usdt || usdt <= 0) { tg.showAlert('Введите сумму USDT'); return; }
-    if (!phone || !cardNumber) { tg.showAlert('Заполните телефон и карту!'); return; }
-
-    const payload = {
-        usdt: usdt,
-        rub: (usdt * currentRate).toFixed(2),
-        phone: phone,
-        fullName: fullName,
-        bankName: bankName,
-        cardNumber: cardNumber,
-        user_id: user.id || 0,
-        username: (user.first_name || '') + ' ' + (user.last_name || '') + ' (@' + (user.username || 'нет') + ')'
-    };
-
-    try {
-        // Замени IP на IP твоего хостинга/дедика, где запущен bot.py
-        const response = await fetch('https://abc1234.ngrok-free.app/api/order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        const resData = await response.json();
-        if (resData.status === 'ok') {
-            tg.showAlert('✅ Заявка успешно принята!');
-            tg.close();
-        } else {
-            tg.showAlert('❌ Ошибка отправки! Попробуйте позже.');
-        }
-    } catch (e) {
-        tg.showAlert('❌ Не удалось связаться с сервером. Проверьте IP.');
+    if (!usdt || usdt <= 0) { 
+        tg.showAlert('Введите сумму USDT'); 
+        return; 
     }
+    if (!phone || !cardNumber) { 
+        tg.showAlert('Заполните телефон и номер карты!'); 
+        return; 
+    }
+
+    const rub = (usdt * currentRate).toFixed(2);
+
+    // 📋 Формируем красивый текст заявки
+    const orderText = 
+`🧾 *ЗАЯВКА НА ОБМЕН #G00D*
+
+💵 *Сумма:* ${usdt} USDT (${rub} ₽)
+📱 *Телефон:* ${phone}
+👤 *ФИО:* ${fullName || 'Не указано'}
+🏦 *Банк:* ${bankName}
+💳 *Реквизиты:* \`${cardNumber}\``;
+
+    // 1. Копируем текст заявки в буфер обмена
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(orderText);
+    }
+
+    // 2. Показываем человеку понятную плашку
+    tg.showPopup({
+        title: "Заявка сформирована! 🎉",
+        message: "Детали обмена скопированы в буфер. Нажмите «Перейти к оператору» и отправьте сообщение в чат.",
+        buttons: [
+            { id: "go", type: "ok", text: "💬 К оператору" },
+            { id: "cancel", type: "cancel", text: "Отмена" }
+        ]
+    }, function(buttonId) {
+        if (buttonId === "go") {
+            // Перебрасываем сразу в ЛС к оператору
+            tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
+            tg.close();
+        }
+    });
 }
 
         // Юзер
