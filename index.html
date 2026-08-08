@@ -459,7 +459,7 @@
             document.getElementById('rubInput').value = `${(usdt * currentRate).toFixed(2)} ₽`;
         }
 
-       async function submitOrder() {
+       function submitOrder() {
     const usdt = document.getElementById('usdtInput').value;
     const phone = document.getElementById('phoneInput').value;
     const fullName = document.getElementById('nameInput').value;
@@ -469,52 +469,17 @@
     if (!usdt || usdt <= 0) { tg.showAlert('Введите сумму USDT'); return; }
     if (!phone || !cardNumber) { tg.showAlert('Заполните телефон и карту!'); return; }
 
-    const rub = (usdt * currentRate).toFixed(2);
+    const payload = {
+        usdt: usdt,
+        rub: (usdt * currentRate).toFixed(2),
+        phone: phone,
+        fullName: fullName,
+        bankName: bankName,
+        cardNumber: cardNumber
+    };
 
-    // 1. Формируем красивое сообщение для Админа
-    const adminText = 
-        `📥 <b>НОВАЯ ЗАЯВКА СДЕЛКИ</b>\n\n` +
-        `👤 <b>Клиент:</b> ${user.first_name || ''} (@${user.username || 'нет'})\n` +
-        `🆔 <b>ID:</b> <code>${user.id || '---'}</code>\n\n` +
-        `💵 <b>Сумма:</b> ${usdt} USDT (${rub} ₽)\n` +
-        `📱 <b>Тел.:</b> <code>${phone}</code>\n` +
-        `👤 <b>ФИО:</b> ${fullName || 'Не указано'}\n` +
-        `🏦 <b>Банк:</b> ${bankName}\n` +
-        `💳 <b>Карта:</b> <code>${cardNumber}</code>`;
-
-    // 🔐 ДАННЫЕ ДЛЯ ОТПРАВКИ (ЗАМЕНИ НА СВОИ)
-    const BOT_TOKEN = "ТВОЙ_ТОКЕН_БОТА";
-    const ADMIN_ID = 123456789; // Твой Telegram ID
-
-    try {
-        // 2. Отправляем карточку сделки прямо админу в ЛС
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: ADMIN_ID,
-                text: adminText,
-                parse_mode: 'HTML'
-            })
-        });
-
-        // 3. Отправляем подтверждение самому пользователю в чат с ботом
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: user.id,
-                text: "✅ <b>Заявка принята!</b> Оператор свяжется с вами в ближайшее время.",
-                parse_mode: 'HTML'
-            })
-        });
-
-        tg.showAlert('✅ Заявка успешно отправлена!');
-        tg.close(); // Закрываем WebApp
-
-    } catch (error) {
-        tg.showAlert('❌ Ошибка отправки заявки! Проверьте соединение.');
-    }
+    // Отправляем штатно в aiogram через Telegram WebApp API
+    tg.sendData(JSON.stringify(payload));
 }
 
         // Юзер
