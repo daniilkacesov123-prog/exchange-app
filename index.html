@@ -467,6 +467,8 @@ function submitOrder() {
     const fullName = document.getElementById('nameInput').value;
     const bankName = document.getElementById('bankSelect').value;
     const cardNumber = document.getElementById('cardInput').value;
+    const userId = tg.initDataUnsafe?.user?.id || 'Не указан';
+    const username = tg.initDataUnsafe?.user?.username ? `@${tg.initDataUnsafe.user.username}` : 'Без username';
 
     if (!usdt || usdt <= 0) { 
         tg.showAlert('Введите сумму USDT'); 
@@ -483,6 +485,8 @@ function submitOrder() {
     const orderText = 
 `🧾 *ЗАЯВКА НА ОБМЕН #G00D*
 
+🆔 *ID:* \`${userId}\`
+👤 Клиент: ${username}
 💵 *Сумма:* ${usdt} USDT (${rub} ₽)
 📱 *Телефон:* ${phone}
 👤 *ФИО:* ${fullName || 'Не указано'}
