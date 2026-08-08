@@ -378,7 +378,12 @@
         <!-- 2️⃣ ВКЛАДКА: ОБМЕН -->
         <div id="tab-exchange" class="tab-content">
             <div class="glass-card">
-                <h3 style="margin-bottom: 14px; text-align: center;">Калькулятор Обмена</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
+                    <h2 style="margin: 0; font-size: 20px;">Калькулятор обмена</h2>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--text-muted);">
+                        Курс USDT: <span id="exchangeTabRate" style="color: var(--accent-gold); font-weight: 700;">98.50 ₽</span>
+                    </div>
+                </div>
                 
                 <div class="input-group">
                     <label class="input-label">Отдаёте (USDT):</label>
@@ -468,14 +473,10 @@
 
         const currentRate = appData.rate || 98.5;
 
-        // 🎯 Точная проверка переключения вкладок
-        window.addEventListener('DOMContentLoaded', () => {
-            const tabParam = urlParams.get('tab');
-            if (tabParam === 'exchange') {
-                const exBtn = document.getElementById('btn-exchange');
-                if (exBtn) switchTab('exchange', exBtn);
-            }
-        });
+const rateElem = document.getElementById('exchangeTabRate');
+if (rateElem && appData.rate) {
+    rateElem.innerText = `${appData.rate} ₽`;
+}
 
         function calcRub() {
             const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
