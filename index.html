@@ -465,20 +465,21 @@
 
         const currentRate = appData.rate || 98.5;
 
-        // Если перешли с кнопки "Продать USDT", сразу открываем вкладку Обмен
-        if (urlParams.get('tab') === 'exchange') {
-            setTimeout(() => {
-                const exBtn = document.getElementById('btn-exchange');
-                if (exBtn) switchTab('exchange', exBtn);
-            }, 100);
-        }
+        // ✅ НОВОЕ (вставить):
+document.addEventListener("DOMContentLoaded", function() {
+    const activeTabParam = urlParams.get('tab');
+    if (activeTabParam === 'exchange') {
+        const exBtn = document.getElementById('btn-exchange');
+        if (exBtn) switchTab('exchange', exBtn);
+    }
+});
 
         function calcRub() {
             const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
             document.getElementById('rubInput').value = `${(usdt * currentRate).toFixed(2)} ₽`;
         }
 
-        const OPERATOR_USERNAME = "https://t.me/G00D_EXCH"; // Логин оператора
+        const OPERATOR_USERNAME = "G00D_EXCH"; // Логин оператора
         const REVIEWS_LINK = "https://t.me/goodchange1611"; // Ссылка на отзывы
         const CHANNEL_LINK = "https://t.me/goodchange1611"; // Ссылка на канал
 
