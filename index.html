@@ -458,55 +458,57 @@
             document.getElementById('rubInput').value = `${(usdt * currentRate).toFixed(2)} ₽`;
         }
 
-// Твой юзернейм оператора без @
+// Юзернейм оператора (без @)
 const OPERATOR_USERNAME = "Babocha_nerd"; 
 
 function submitOrder() {
-    const usdtInput = document.getElementById('usdtInput');
-    const phoneInput = document.getElementById('phoneInput');
-    const nameInput = document.getElementById('nameInput');
-    const bankSelect = document.getElementById('bankSelect');
-    const cardInput = document.getElementById('cardInput');
+    const usdt = document.getElementById('usdtInput').value;
+    const phone = document.getElementById('phoneInput').value;
+    const fullName = document.getElementById('nameInput').value;
+    const bankName = document.getElementById('bankSelect').value;
+    const cardNumber = document.getElementById('cardInput').value;
 
-    const usdt = usdtInput ? usdtInput.value : '';
-    const phone = phoneInput ? phoneInput.value : '';
-    const fullName = nameInput ? nameInput.value : '';
-    const bankName = bankSelect ? bankSelect.value : '';
-    const cardNumber = cardInput ? cardInput.value : '';
-
-    if (!usdt || parseFloat(usdt) <= 0) { 
-        alert('Введите сумму USDT'); 
+    if (!usdt || usdt <= 0) { 
+        tg.showAlert('Введите сумму USDT'); 
         return; 
     }
     if (!phone || !cardNumber) { 
-        alert('Заполните телефон и номер карты!'); 
+        tg.showAlert('Заполните телефон и номер карты!'); 
         return; 
     }
 
-    const rub = (parseFloat(usdt) * (window.currentRate || 90)).toFixed(2);
+    const rub = (usdt * currentRate).toFixed(2);
 
-    // 📋 Текст заявки для буфера
-    const orderText = `🧾 ЗАЯВКА НА ОБМЕН #G00D\n\n💵 Сумма: ${usdt} USDT (${rub} ₽)\n📱 Телефон: ${phone}\n👤 ФИО: ${fullName || 'Не указано'}\n🏦 Банк: ${bankName}\n💳 Реквизиты: ${cardNumber}`;
+    // 📋 Формируем красивый текст заявки
+    const orderText = 
+`🧾 *ЗАЯВКА НА ОБМЕН #G00D*
 
-    // Копируем текст в буфер
+💵 *Сумма:* ${usdt} USDT (${rub} ₽)
+📱 *Телефон:* ${phone}
+👤 *ФИО:* ${fullName || 'Не указано'}
+🏦 *Банк:* ${bankName}
+💳 *Реквизиты:* \`${cardNumber}\``;
+
+    // 1. Копируем текст заявки в буфер обмена
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(orderText);
-    } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = orderText;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
     }
 
-    // Редирект в ЛС оператора
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
-        window.Telegram.WebApp.close();
-    } else {
-        window.location.href = `https://t.me/${OPERATOR_USERNAME}`;
-    }
+    // 2. Показываем человеку понятную плашку
+    tg.showPopup({
+        title: "Заявка сформирована! 🎉",
+        message: "Детали обмена скопированы в буфер. Нажмите «Перейти к оператору» и отправьте сообщение в чат.",
+        buttons: [
+            { id: "go", type: "ok", text: "💬 К оператору" },
+            { id: "cancel", type: "cancel", text: "Отмена" }
+        ]
+    }, function(buttonId) {
+        if (buttonId === "go") {
+            // Перебрасываем сразу в ЛС к оператору
+            tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
+            tg.close();
+        }
+    });
 }
 
         // Юзер
