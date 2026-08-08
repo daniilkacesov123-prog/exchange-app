@@ -467,30 +467,30 @@
             document.getElementById('rubInput').value = `${(usdt * currentRate).toFixed(2)} ₽`;
         }
 
-        const OPERATOR_USERNAME = "Babocha_nerd"; // Логин оператора
-        const REVIEWS_LINK = "https://t.me/G00D_EXCHBot"; // Ссылка на отзывы
-        const CHANNEL_LINK = "https://t.me/G00D_EXCHBot"; // Ссылка на канал
+        const OPERATOR_USERNAME = "@G00D_EXCH"; // Логин оператора
+        const REVIEWS_LINK = "https://t.me/goodchange1611"; // Ссылка на отзывы
+        const CHANNEL_LINK = "https://t.me/goodchange1611"; // Ссылка на канал
 
         function submitOrder() {
-            const usdt = document.getElementById('usdtInput').value;
-            const phone = document.getElementById('phoneInput').value;
-            const fullName = document.getElementById('nameInput').value;
-            const bankName = document.getElementById('bankInput').value;
-            const cardNumber = document.getElementById('cardInput').value;
+    const usdt = document.getElementById('usdtInput').value;
+    const phone = document.getElementById('phoneInput').value;
+    const fullName = document.getElementById('nameInput').value;
+    const bankName = document.getElementById('bankInput').value;
+    const cardNumber = document.getElementById('cardInput').value;
 
-            if (!usdt || parseFloat(usdt) <= 0) { 
-                tg.showAlert('Введите сумму USDT'); 
-                return; 
-            }
-            if (!phone) { 
-                tg.showAlert('Заполните ваш номер телефона!'); 
-                return; 
-            }
+    if (!usdt || parseFloat(usdt) <= 0) { 
+        tg.showAlert('Введите сумму USDT'); 
+        return; 
+    }
+    if (!phone) { 
+        tg.showAlert('Заполните ваш номер телефона!'); 
+        return; 
+    }
 
-            const rub = (usdt * currentRate).toFixed(2);
-            const userId = tg.initDataUnsafe?.user?.id || '---';
+    const rub = (usdt * currentRate).toFixed(2);
+    const userId = tg.initDataUnsafe?.user?.id || '---';
 
-            const orderText = 
+    const orderText = 
 `🧾 ЗАЯВКА НА ОБМЕН #G00D
 
 🆔 ID: ${userId}
@@ -500,24 +500,25 @@
 🏦 Банк: ${bankName || 'Не указан'}
 💳 Реквизиты: ${cardNumber || 'Не указаны'}`;
 
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(orderText);
-            }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(orderText);
+    }
 
-            tg.showPopup({
-                title: "Заявка создана! 🎉",
-                message: "Детали обмена скопированы. Нажмите «К оператору» и отправьте скопированную заявку в диалог.",
-                buttons: [
-                    { id: "go", type: "ok", text: "💬 К оператору" },
-                    { id: "cancel", type: "cancel", text: "Отмена" }
-                ]
-            }, function(buttonId) {
-                if (buttonId === "go") {
-                    tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
-                    tg.close();
-                }
-            });
+    tg.showPopup({
+        title: "Заявка создана! 🎉",
+        message: "Детали обмена скопированы. Нажмите «К оператору» и отправьте скопированную заявку в диалог.",
+        buttons: [
+            { id: "go", type: "ok", text: "💬 К оператору" },
+            { id: "cancel", type: "cancel", text: "Отмена" }
+        ]
+    }, function(buttonId) {
+        if (buttonId === "go") {
+            // Открывает диалог с профилем @G00D_EXCH
+            tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
+            tg.close();
         }
+    });
+}
 
         function openSupport() { tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`); }
         function openReviews() { tg.openTelegramLink(REVIEWS_LINK); }
