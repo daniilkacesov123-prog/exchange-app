@@ -55,14 +55,15 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 28px 14px 20px 14px; /* Увеличен верхний отступ, чтобы опустить весь интерфейс */
+            /* 📱 Увеличили верхний отступ под iPhone (Dynamic Island и кнопки Telegram) */
+            padding: calc(var(--tg-content-safe-area-inset-top, 50px) + 10px) 14px 20px 14px;
             box-sizing: border-box;
-            overflow-y: auto; /* Позволяет комфортно скроллить на экранах любой высоты */
+            overflow-y: auto;
         }
 
         .brand-header {
             text-align: center;
-            padding: 10px 0 16px 0;
+            padding: 4px 0 14px 0;
             flex-shrink: 0;
         }
 
@@ -85,7 +86,6 @@
             100% { background-position: 200% center; }
         }
 
-        /* 🔝 ВЕРХНЕЕ МЕНЮ */
         .top-nav {
             display: flex;
             gap: 6px;
@@ -132,7 +132,6 @@
             flex-direction: column;
         }
 
-        /* ФОРМА ОБМЕНА И КАРТОЧКИ */
         .glass-card {
             background: var(--card-glass);
             border-radius: 24px;
@@ -160,7 +159,7 @@
             letter-spacing: 0.5px;
         }
 
-        .custom-input, .custom-select {
+        .custom-input {
             width: 100%;
             padding: 12px 14px;
             background: rgba(10, 8, 20, 0.7);
@@ -171,12 +170,11 @@
             outline: none;
         }
 
-        .custom-input:focus, .custom-select:focus {
+        .custom-input:focus {
             border-color: #a78bfa;
             box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
         }
 
-        /* ПРОФИЛЬ */
         .avatar-wrapper {
             position: relative;
             margin-bottom: 12px;
@@ -250,7 +248,6 @@
 
         .global-stats span { color: #fff; font-weight: 700; }
 
-        /* СПИСКИ */
         .list-card {
             background: var(--card-glass);
             border-radius: 16px;
@@ -306,86 +303,81 @@
             <button class="nav-btn" onclick="switchTab('support', this)">🎧 Поддержка</button>
         </div>
 
-        <!-- 1️⃣ ВКЛАДКА: ОБМЕН (ТЕПЕРЬ ВТОРАЯ) -->
-<div id="tab-exchange" class="tab-content">
-    <div class="glass-card">
-        <h3 style="margin-bottom: 14px; text-align: center;">Оформление сделки</h3>
-        
-        <div class="input-group">
-            <label class="input-label">Отдаёте (USDT):</label>
-            <input type="number" id="usdtInput" class="custom-input" placeholder="например: 100" oninput="calcRub()">
-        </div>
+        <!-- 1️⃣ ВКЛАДКА: ОБМЕН -->
+        <div id="tab-exchange" class="tab-content">
+            <div class="glass-card">
+                <h3 style="margin-bottom: 14px; text-align: center;">Оформление сделки</h3>
+                
+                <div class="input-group">
+                    <label class="input-label">Отдаёте (USDT):</label>
+                    <input type="number" id="usdtInput" class="custom-input" placeholder="например: 100" oninput="calcRub()">
+                </div>
 
-        <div class="input-group">
-            <label class="input-label">Получаете (Рубли):</label>
-            <input type="text" id="rubInput" class="custom-input" readonly placeholder="0 ₽">
-        </div>
+                <div class="input-group">
+                    <label class="input-label">Получаете (Рубли):</label>
+                    <input type="text" id="rubInput" class="custom-input" readonly placeholder="0 ₽">
+                </div>
 
-        <div class="input-group">
-            <label class="input-label">Ваш номер телефона:</label>
-            <input type="tel" id="phoneInput" class="custom-input" placeholder="+7 (999) 000-00-00">
-        </div>
+                <div class="input-group">
+                    <label class="input-label">Ваш номер телефона:</label>
+                    <input type="tel" id="phoneInput" class="custom-input" placeholder="+7 (999) 000-00-00">
+                </div>
 
-        <div class="input-group">
-            <label class="input-label">ФИО получателя:</label>
-            <input type="text" id="nameInput" class="custom-input" placeholder="Иванов И. И.">
-        </div>
+                <div class="input-group">
+                    <label class="input-label">ФИО получателя:</label>
+                    <input type="text" id="nameInput" class="custom-input" placeholder="Иванов И. И. (необязательно)">
+                </div>
 
-        <div class="input-group">
-            <label class="input-label">Выберите банк:</label>
-            <select id="bankSelect" class="custom-select">
-                <option value="Сбербанк">Сбербанк</option>
-                <option value="Т-Банк (Тинькофф)">Т-Банк (Тинькофф)</option>
-                <option value="СБП (Система Быстрых Платежей)">СБП</option>
-                <option value="Альфа-Банк">Альфа-Банк</option>
-                <option value="ВТБ">ВТБ</option>
-            </select>
-        </div>
+                <!-- 🏦 ЗАМЕНИЛИ SELECT НА INPUT ПО ПРОСЬБЕ ЗАКАЗЧИКА -->
+                <div class="input-group">
+                    <label class="input-label">Ваш Банк:</label>
+                    <input type="text" id="bankInput" class="custom-input" placeholder="Сбербанк, Озон, Т-Банк и др.">
+                </div>
 
-        <div class="input-group">
-            <label class="input-label">Номер карты / СБП:</label>
-            <input type="text" id="cardInput" class="custom-input" placeholder="2202 .... .... ....">
-        </div>
+                <div class="input-group">
+                    <label class="input-label">Номер карты / СБП (необязательно):</label>
+                    <input type="text" id="cardInput" class="custom-input" placeholder="2202 .... .... ....">
+                </div>
 
-        <button class="btn-action" onclick="submitOrder()" style="margin-top: 8px;">Оформить сделку с оператором</button>
-    </div>
-</div>
-
-<!-- 2️⃣ ВКЛАДКА: ПРОФИЛЬ (ТЕПЕРЬ ПЕРВАЯ / АКТИВНАЯ) -->
-<div id="tab-profile" class="tab-content active">
-    <div class="glass-card">
-        <div class="avatar-wrapper">
-            <div class="avatar" id="userAvatar">U</div>
-        </div>
-        <div class="user-name" id="userName">Загрузка...</div>
-        <div class="user-badge" id="userRankBadge">🥉 Новичок I</div>
-        <div class="user-id" id="userId">ID: ---</div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Сделок</div>
-                <div class="stat-value" id="totalExchanges">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Весь оборот</div>
-                <div class="stat-value" id="totalVolume">0 ₽</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Оборот 24ч</div>
-                <div class="stat-value" id="volume24h">0 ₽</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Рефералы</div>
-                <div class="stat-value" id="refCountProfile">0 чел</div>
+                <button class="btn-action" onclick="submitOrder()" style="margin-top: 8px;">Оформить сделку с оператором</button>
             </div>
         </div>
 
-        <div class="global-stats">
-            <div>Всего в боте: <span id="globalUsers">0</span> пользователей</div>
-            <div>Общий оборот бота: <span id="globalVolume">0 ₽</span> (<span id="globalExchanges">0</span> обменов)</div>
+        <!-- 2️⃣ ВКЛАДКА: ПРОФИЛЬ -->
+        <div id="tab-profile" class="tab-content active">
+            <div class="glass-card">
+                <div class="avatar-wrapper">
+                    <div class="avatar" id="userAvatar">U</div>
+                </div>
+                <div class="user-name" id="userName">Загрузка...</div>
+                <div class="user-badge" id="userRankBadge">🥉 Новичок I</div>
+                <div class="user-id" id="userId">ID: ---</div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Сделок</div>
+                        <div class="stat-value" id="totalExchanges">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Весь оборот</div>
+                        <div class="stat-value" id="totalVolume">0 ₽</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Оборот 24ч</div>
+                        <div class="stat-value" id="volume24h">0 ₽</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Рефералы</div>
+                        <div class="stat-value" id="refCountProfile">0 чел</div>
+                    </div>
+                </div>
+
+                <div class="global-stats">
+                    <div>Всего в боте: <span id="globalUsers">0</span> пользователей</div>
+                    <div>Общий оборот бота: <span id="globalVolume">0 ₽</span> (<span id="globalExchanges">0</span> обменов)</div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
         <!-- 3️⃣ ВКЛАДКА: ИСТОРИЯ -->
         <div id="tab-history" class="tab-content">
@@ -458,64 +450,57 @@
             document.getElementById('rubInput').value = `${(usdt * currentRate).toFixed(2)} ₽`;
         }
 
-// Юзернейм оператора (без @)
-const OPERATOR_USERNAME = "Babocha_nerd"; 
+        const OPERATOR_USERNAME = "Babocha_nerd"; 
 
-function submitOrder() {
-    const usdt = document.getElementById('usdtInput').value;
-    const phone = document.getElementById('phoneInput').value;
-    const fullName = document.getElementById('nameInput').value;
-    const bankName = document.getElementById('bankSelect').value;
-    const cardNumber = document.getElementById('cardInput').value;
-    const userId = tg.initDataUnsafe?.user?.id || 'Не указан';
-    const username = tg.initDataUnsafe?.user?.username ? `@${tg.initDataUnsafe.user.username}` : 'Без username';
+        function submitOrder() {
+            const usdt = document.getElementById('usdtInput').value;
+            const phone = document.getElementById('phoneInput').value;
+            const fullName = document.getElementById('nameInput').value;
+            const bankName = document.getElementById('bankInput').value;
+            const cardNumber = document.getElementById('cardInput').value;
 
-    if (!usdt || usdt <= 0) { 
-        tg.showAlert('Введите сумму USDT'); 
-        return; 
-    }
-    if (!phone || !cardNumber) { 
-        tg.showAlert('Заполните телефон и номер карты!'); 
-        return; 
-    }
+            // ⚠️ Номер карты убрали из обязательных по просьбе заказчика!
+            if (!usdt || parseFloat(usdt) <= 0) { 
+                tg.showAlert('Введите сумму USDT'); 
+                return; 
+            }
+            if (!phone) { 
+                tg.showAlert('Заполните ваш номер телефона!'); 
+                return; 
+            }
 
-    const rub = (usdt * currentRate).toFixed(2);
+            const rub = (usdt * currentRate).toFixed(2);
+            const userId = tg.initDataUnsafe?.user?.id || '---';
 
-    // 📋 Формируем красивый текст заявки
-    const orderText = 
+            const orderText = 
 `🧾 *ЗАЯВКА НА ОБМЕН #G00D*
 
 🆔 *ID:* \`${userId}\`
-👤 Клиент: ${username}
 💵 *Сумма:* ${usdt} USDT (${rub} ₽)
 📱 *Телефон:* ${phone}
 👤 *ФИО:* ${fullName || 'Не указано'}
-🏦 *Банк:* ${bankName}
-💳 *Реквизиты:* \`${cardNumber}\``;
+🏦 *Банк:* ${bankName || 'Не указан'}
+💳 *Реквизиты:* ${cardNumber ? `\`${cardNumber}\`` : 'Не указаны'}`;
 
-    // 1. Копируем текст заявки в буфер обмена
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(orderText);
-    }
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(orderText);
+            }
 
-    // 2. Показываем человеку понятную плашку
-    tg.showPopup({
-        title: "Заявка сформирована! 🎉",
-        message: "Детали обмена скопированы в буфер. Нажмите «Перейти к оператору» и отправьте сообщение в чат.",
-        buttons: [
-            { id: "go", type: "ok", text: "💬 К оператору" },
-            { id: "cancel", type: "cancel", text: "Отмена" }
-        ]
-    }, function(buttonId) {
-        if (buttonId === "go") {
-            // Перебрасываем сразу в ЛС к оператору
-            tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
-            tg.close();
+            tg.showPopup({
+                title: "Заявка сформирована! 🎉",
+                message: "Детали обмена скопированы в буфер. Нажмите «Перейти к оператору» и отправьте сообщение в чат.",
+                buttons: [
+                    { id: "go", type: "ok", text: "💬 К оператору" },
+                    { id: "cancel", type: "cancel", text: "Отмена" }
+                ]
+            }, function(buttonId) {
+                if (buttonId === "go") {
+                    tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
+                    tg.close();
+                }
+            });
         }
-    });
-}
 
-        // Юзер
         const user = tg.initDataUnsafe?.user || {};
         const firstName = user.first_name || 'Трейдер';
         document.getElementById('userName').innerText = firstName + (user.last_name ? ` ${user.last_name}` : '');
