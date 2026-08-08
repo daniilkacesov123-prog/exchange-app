@@ -55,13 +55,14 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 12px;
+            padding: 28px 14px 20px 14px; /* Увеличен верхний отступ, чтобы опустить весь интерфейс */
             box-sizing: border-box;
+            overflow-y: auto; /* Позволяет комфортно скроллить на экранах любой высоты */
         }
 
         .brand-header {
             text-align: center;
-            padding: 6px 0 12px 0;
+            padding: 10px 0 16px 0;
             flex-shrink: 0;
         }
 
@@ -90,17 +91,17 @@
             gap: 6px;
             background: rgba(15, 10, 30, 0.8);
             border: 1px solid var(--border-purple);
-            padding: 4px;
+            padding: 6px;
             border-radius: 16px;
             backdrop-filter: blur(15px);
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             flex-shrink: 0;
             overflow-x: auto;
         }
 
         .nav-btn {
             flex: 1;
-            padding: 8px 10px;
+            padding: 9px 10px;
             border: none;
             background: transparent;
             color: var(--text-muted);
@@ -123,8 +124,7 @@
         .tab-content {
             display: none;
             flex: 1;
-            overflow-y: auto;
-            padding-right: 2px;
+            padding-bottom: 16px;
         }
 
         .tab-content.active {
