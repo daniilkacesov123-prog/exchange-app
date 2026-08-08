@@ -452,54 +452,52 @@
 
         const OPERATOR_USERNAME = "Babocha_nerd"; 
 
-        function submitOrder() {
-            const usdt = document.getElementById('usdtInput').value;
-            const phone = document.getElementById('phoneInput').value;
-            const fullName = document.getElementById('nameInput').value;
-            const bankName = document.getElementById('bankInput').value;
-            const cardNumber = document.getElementById('cardInput').value;
+        // ✅ ВСТАВЛЯЕМ ВМЕСТО УДАЛЕННОГО КОДА:
+async function submitOrder() {
+    const usdt = document.getElementById('usdtInput').value;
+    const phone = document.getElementById('phoneInput').value;
+    const fullName = document.getElementById('nameInput').value;
+    const bankName = document.getElementById('bankInput').value;
+    const cardNumber = document.getElementById('cardInput').value;
 
-            // ⚠️ Номер карты убрали из обязательных по просьбе заказчика!
-            if (!usdt || parseFloat(usdt) <= 0) { 
-                tg.showAlert('Введите сумму USDT'); 
-                return; 
-            }
-            if (!phone) { 
-                tg.showAlert('Заполните ваш номер телефона!'); 
-                return; 
-            }
+    if (!usdt || parseFloat(usdt) <= 0) {
+        tg.showAlert('Введите сумму USDT!');
+        return;
+    }
+    if (!phone) {
+        tg.showAlert('Заполните ваш номер телефона!');
+        return;
+    }
 
-            const rub = (usdt * currentRate).toFixed(2);
-            const userId = tg.initDataUnsafe?.user?.id || '---';
+    const userId = tg.initDataUnsafe?.user?.id || 0;
+    const rub = (parseFloat(usdt) * currentRate).toFixed(2);
 
-            const orderText = 
-`🧾 *ЗАЯВКА НА ОБМЕН #G00D*
+    // 🚀 Отправляем данные прямо на сервер бота без буферов и копирований!
+    try {
+        const response = await fetch('http://localhost:8080/api/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                usdt: usdt,
+                rub: rub,
+                phone: phone,
+                fullName: fullName || 'Не указано',
+                bank: bankName || 'Не указан',
+                card: cardNumber || 'Не указана'
+            })
+        });
 
-🆔 *ID:* \`${userId}\`
-💵 *Сумма:* ${usdt} USDT (${rub} ₽)
-📱 *Телефон:* ${phone}
-👤 *ФИО:* ${fullName || 'Не указано'}
-🏦 *Банк:* ${bankName || 'Не указан'}
-💳 *Реквизиты:* ${cardNumber ? `\`${cardNumber}\`` : 'Не указаны'}`;
-
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(orderText);
-            }
-
-            tg.showPopup({
-                title: "Заявка сформирована! 🎉",
-                message: "Детали обмена скопированы в буфер. Нажмите «Перейти к оператору» и отправьте сообщение в чат.",
-                buttons: [
-                    { id: "go", type: "ok", text: "💬 К оператору" },
-                    { id: "cancel", type: "cancel", text: "Отмена" }
-                ]
-            }, function(buttonId) {
-                if (buttonId === "go") {
-                    tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`);
-                    tg.close();
-                }
-            });
+        if (response.ok) {
+            // Закрываем WebApp — юзер окажется в чате бота, где его уже ждет подтверждение!
+            tg.close();
+        } else {
+            tg.showAlert('❌ Ошибка сервера при создании заявки.');
         }
+    } catch (e) {
+        tg.showAlert('❌ Не удалось связаться с сервером бота.');
+    }
+}
 
         const user = tg.initDataUnsafe?.user || {};
         const firstName = user.first_name || 'Трейдер';
@@ -614,7 +612,7 @@
         }
 
         function openTelegramSupport() {
-            tg.openTelegramLink('https://t.me/babocha');
+            tg.openTelegramLink('https://t.me/Babocha_nerd');
         }
 
         const canvas = document.getElementById('stars-canvas');
