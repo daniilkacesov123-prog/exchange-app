@@ -84,7 +84,7 @@
             100% { background-position: 200% center; }
         }
 
-        /* ВЕРХНЕЕ МЕНЮ */
+        /* 🔝 ВЕРХНЕЕ МЕНЮ */
         .top-nav {
             display: flex;
             gap: 6px;
@@ -120,7 +120,6 @@
             box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
         }
 
-        /* ВКЛАДКИ */
         .tab-content {
             display: none;
             flex: 1;
@@ -133,8 +132,8 @@
             flex-direction: column;
         }
 
-        /* ПРОФИЛЬ */
-        .profile-card {
+        /* ФОРМА ОБМЕНА И КАРТОЧКИ */
+        .glass-card {
             background: var(--card-glass);
             border-radius: 24px;
             padding: 20px;
@@ -143,14 +142,45 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
             margin-bottom: 12px;
         }
 
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .input-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .custom-input, .custom-select {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(10, 8, 20, 0.7);
+            border: 1px solid var(--border-purple);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .custom-input:focus, .custom-select:focus {
+            border-color: #a78bfa;
+            box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+        }
+
+        /* ПРОФИЛЬ */
         .avatar-wrapper {
             position: relative;
             margin-bottom: 12px;
+            align-self: center;
         }
 
         .avatar {
@@ -169,34 +199,13 @@
             overflow: hidden;
         }
 
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .online-status {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 16px;
-            height: 16px;
-            background: #4ade80;
-            border-radius: 50%;
-            border: 3px solid #100c20;
-            box-shadow: 0 0 8px #4ade80;
-        }
-
-        .user-name {
-            font-size: 20px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-
+        .user-name { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; text-align: center;}
         .user-badge {
             display: inline-flex;
             align-items: center;
+            align-self: center;
             gap: 6px;
             padding: 4px 12px;
             border-radius: 20px;
@@ -207,12 +216,7 @@
             color: #c084fc;
             margin-bottom: 6px;
         }
-
-        .user-id {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
+        .user-id { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; text-align: center; }
 
         .stats-grid {
             width: 100%;
@@ -227,41 +231,24 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 12px;
             border-radius: 14px;
+            text-align: center;
         }
 
-        .stat-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-        }
+        .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .stat-value { font-size: 15px; font-weight: 800; color: var(--accent-gold); }
 
-        .stat-value {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--accent-gold);
-        }
-
-        /* БЛОК ОБЩЕЙ СТАТИСТИКИ БОТА */
         .global-stats {
             width: 100%;
             background: rgba(15, 10, 30, 0.5);
             border: 1px dashed var(--border-purple);
             padding: 12px;
             border-radius: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
             font-size: 12px;
             color: var(--text-muted);
             text-align: center;
         }
 
-        .global-stats span {
-            color: #fff;
-            font-weight: 700;
-        }
+        .global-stats span { color: #fff; font-weight: 700; }
 
         /* СПИСКИ */
         .list-card {
@@ -285,18 +272,6 @@
             border-radius: 12px;
         }
 
-        .list-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .rank-number {
-            font-weight: 800;
-            width: 24px;
-            color: var(--text-muted);
-        }
-
         .btn-action {
             width: 100%;
             padding: 14px;
@@ -308,7 +283,6 @@
             font-size: 14px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
-            transition: opacity 0.2s;
         }
 
         .btn-action:active { opacity: 0.8; }
@@ -323,27 +297,71 @@
             <div class="gold-title">G00D_EXCH</div>
         </div>
 
-        <!-- 🔝 ВЕРХНЕЕ МЕНЮ -->
+        <!-- 🔝 ВЕРХНЕЕ МЕНЮ НАВИГАЦИИ -->
         <div class="top-nav">
-            <button class="nav-btn active" onclick="switchTab('profile', this)">👤 Профиль</button>
+            <button class="nav-btn active" onclick="switchTab('exchange', this)">💱 Обмен</button>
+            <button class="nav-btn" onclick="switchTab('profile', this)">👤 Профиль</button>
             <button class="nav-btn" onclick="switchTab('history', this)">📜 История</button>
             <button class="nav-btn" onclick="switchTab('top', this)">🏆 Топ-50</button>
             <button class="nav-btn" onclick="switchTab('ref', this)">👥 Рефка</button>
             <button class="nav-btn" onclick="switchTab('support', this)">🎧 Поддержка</button>
         </div>
 
-        <!-- 1️⃣ ВКЛАДКА: ПРОФИЛЬ -->
-        <div id="tab-profile" class="tab-content active">
-            <div class="profile-card">
+        <!-- 1️⃣ ВКЛАДКА: ОБМЕН (ПЕРВАЯ ПРИ ОТКРЫТИИ) -->
+        <div id="tab-exchange" class="tab-content active">
+            <div class="glass-card">
+                <h3 style="margin-bottom: 14px; text-align: center;">Оформление сделки</h3>
+                
+                <div class="input-group">
+                    <label class="input-label">Отдаёте (USDT):</label>
+                    <input type="number" id="usdtInput" class="custom-input" placeholder="например: 100" oninput="calcRub()">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Получаете (Рубли):</label>
+                    <input type="text" id="rubInput" class="custom-input" readonly placeholder="0 ₽">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Ваш номер телефона:</label>
+                    <input type="tel" id="phoneInput" class="custom-input" placeholder="+7 (999) 000-00-00">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">ФИО получателя:</label>
+                    <input type="text" id="nameInput" class="custom-input" placeholder="Иванов И. И.">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Выберите банк:</label>
+                    <select id="bankSelect" class="custom-select">
+                        <option value="Сбербанк">Сбербанк</option>
+                        <option value="Т-Банк (Тинькофф)">Т-Банк (Тинькофф)</option>
+                        <option value="СБП (Система Быстрых Платежей)">СБП</option>
+                        <option value="Альфа-Банк">Альфа-Банк</option>
+                        <option value="ВТБ">ВТБ</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Номер карты / СБП:</label>
+                    <input type="text" id="cardInput" class="custom-input" placeholder="2202 .... .... ....">
+                </div>
+
+                <button class="btn-action" onclick="submitOrder()" style="margin-top: 8px;">Создать заявку</button>
+            </div>
+        </div>
+
+        <!-- 2️⃣ ВКЛАДКА: ПРОФИЛЬ -->
+        <div id="tab-profile" class="tab-content">
+            <div class="glass-card">
                 <div class="avatar-wrapper">
                     <div class="avatar" id="userAvatar">U</div>
-                    <div class="online-status"></div>
                 </div>
                 <div class="user-name" id="userName">Загрузка...</div>
                 <div class="user-badge" id="userRankBadge">🥉 Новичок I</div>
                 <div class="user-id" id="userId">ID: ---</div>
 
-                <!-- СТАТИСТИКА ЮЗЕРА (4 КАРТОЧКИ) -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-label">Сделок</div>
@@ -363,7 +381,6 @@
                     </div>
                 </div>
 
-                <!-- ОБЩАЯ СТАТИСТИКА БОТА -->
                 <div class="global-stats">
                     <div>Всего в боте: <span id="globalUsers">0</span> пользователей</div>
                     <div>Общий оборот бота: <span id="globalVolume">0 ₽</span> (<span id="globalExchanges">0</span> обменов)</div>
@@ -371,23 +388,23 @@
             </div>
         </div>
 
-        <!-- 2️⃣ ВКЛАДКА: ИСТОРИЯ -->
+        <!-- 3️⃣ ВКЛАДКА: ИСТОРИЯ -->
         <div id="tab-history" class="tab-content">
             <div class="list-card" id="historyList">
                 <div style="text-align: center; color: var(--text-muted); padding: 20px;">Загрузка истории...</div>
             </div>
         </div>
 
-        <!-- 3️⃣ ВКЛАДКА: ТОП-50 -->
+        <!-- 4️⃣ ВКЛАДКА: ТОП-50 -->
         <div id="tab-top" class="tab-content">
             <div class="list-card" id="topList">
                 <div style="text-align: center; color: var(--text-muted); padding: 20px;">Загрузка рейтинга...</div>
             </div>
         </div>
 
-        <!-- 4️⃣ ВКЛАДКА: РЕФЕРАЛКА -->
+        <!-- 5️⃣ ВКЛАДКА: РЕФЕРАЛКА -->
         <div id="tab-ref" class="tab-content">
-            <div class="profile-card">
+            <div class="glass-card" style="text-align: center;">
                 <div style="font-size: 36px; margin-bottom: 8px;">👥</div>
                 <div class="user-name">Партнерская программа</div>
                 <div style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px 0;">
@@ -409,9 +426,9 @@
             </div>
         </div>
 
-        <!-- 5️⃣ ВКЛАДКА: ПОДДЕРЖКА -->
+        <!-- 6️⃣ ВКЛАДКА: ПОДДЕРЖКА -->
         <div id="tab-support" class="tab-content">
-            <div class="profile-card">
+            <div class="glass-card" style="text-align: center;">
                 <div style="font-size: 36px; margin-bottom: 8px;">🎧</div>
                 <div class="user-name">Служба Поддержки</div>
                 <div style="font-size: 13px; color: var(--text-muted); margin: 8px 0 20px 0;">
@@ -428,7 +445,6 @@
         tg.ready();
         if (tg.requestFullscreen) tg.requestFullscreen(); else tg.expand();
 
-        // Данные из URL
         const urlParams = new URLSearchParams(window.location.search);
         let appData = {};
         try {
@@ -436,13 +452,41 @@
             if (rawData) appData = JSON.parse(decodeURIComponent(rawData));
         } catch(e) {}
 
+        const currentRate = appData.rate || 98.5;
+
+        function calcRub() {
+            const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
+            document.getElementById('rubInput').value = `${(usdt * currentRate).toFixed(2)} ₽`;
+        }
+
+        function submitOrder() {
+            const usdt = document.getElementById('usdtInput').value;
+            const phone = document.getElementById('phoneInput').value;
+            const fullName = document.getElementById('nameInput').value;
+            const bankName = document.getElementById('bankSelect').value;
+            const cardNumber = document.getElementById('cardInput').value;
+
+            if (!usdt || usdt <= 0) { tg.showAlert('Введите сумму USDT'); return; }
+            if (!phone || !cardNumber) { tg.showAlert('Заполните телефон и карту!'); return; }
+
+            const payload = {
+                usdt: usdt,
+                rub: (usdt * currentRate).toFixed(2),
+                phone: phone,
+                fullName: fullName,
+                bankName: bankName,
+                cardNumber: cardNumber
+            };
+
+            tg.sendData(JSON.stringify(payload));
+        }
+
         // Юзер
         const user = tg.initDataUnsafe?.user || {};
         const firstName = user.first_name || 'Трейдер';
         document.getElementById('userName').innerText = firstName + (user.last_name ? ` ${user.last_name}` : '');
         document.getElementById('userId').innerText = `ID: ${user.id || '---'}`;
 
-        // Аватар
         const avatarEl = document.getElementById('userAvatar');
         if (user.photo_url) {
             avatarEl.innerHTML = `<img src="${user.photo_url}" alt="avatar">`;
@@ -450,7 +494,6 @@
             avatarEl.innerText = firstName[0].toUpperCase();
         }
 
-        // Ранги со скрина (без изменений)
         function getRankInfo(vol) {
             if (vol < 10000) return { name: "Новичок I", icon: "🥉" };
             else if (vol < 20000) return { name: "Новичок II", icon: "🥉" };
@@ -474,7 +517,6 @@
             else return { name: "VIP MAX", icon: "👑" };
         }
 
-        // Заполнение профиля
         if (appData.user_stats) {
             const vol = appData.user_stats.volume || 0;
             const vol24 = appData.user_stats.volume_24h || 0;
@@ -493,14 +535,12 @@
             document.getElementById('refIncome').innerText = `${(appData.user_stats.ref_income || 0).toFixed(2)} ₽`;
         }
 
-        // Заполнение общей статистики бота
         if (appData.global_stats) {
             document.getElementById('globalUsers').innerText = appData.global_stats.total_users.toLocaleString('ru-RU');
             document.getElementById('globalVolume').innerText = `${appData.global_stats.total_volume.toLocaleString('ru-RU')} ₽`;
             document.getElementById('globalExchanges').innerText = appData.global_stats.total_exchanges.toLocaleString('ru-RU');
         }
 
-        // РЕНДЕР ТОП-50
         const topContainer = document.getElementById('topList');
         if (appData.top50 && appData.top50.length > 0) {
             topContainer.innerHTML = appData.top50.map((item, index) => {
@@ -511,42 +551,39 @@
 
                 return `
                     <div class="list-item">
-                        <div class="list-left">
-                            <span class="rank-number">${badge}</span>
-                            <span style="font-weight: 600;">@${item.username}</span>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-weight:800; width:24px;">${badge}</span>
+                            <span style="font-weight:600;">@${item.username}</span>
                         </div>
-                        <span style="font-weight: 800; color: var(--accent-gold);">${item.volume.toLocaleString('ru-RU')} ₽</span>
+                        <span style="font-weight:800; color:var(--accent-gold);">${item.volume.toLocaleString('ru-RU')} ₽</span>
                     </div>
                 `;
             }).join('');
         } else {
-            topContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 15px;">Список лидеров пока пуст</div>';
+            topContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 15px;">Список лидеров пуст</div>';
         }
 
-        // РЕНДЕР ИСТОРИИ
         const historyContainer = document.getElementById('historyList');
         if (appData.history && appData.history.length > 0) {
             historyContainer.innerHTML = appData.history.map(h => `
                 <div class="list-item">
-                    <div class="list-left">
-                        <span style="font-size: 18px;">💱</span>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:18px;">💱</span>
                         <div>
-                            <div style="font-size: 14px; font-weight: 700;">${h.usdt} USDT</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">${h.date}</div>
+                            <div style="font-size:14px; font-weight:700;">${h.usdt} USDT</div>
+                            <div style="font-size:11px; color:var(--text-muted);">${h.date}</div>
                         </div>
                     </div>
-                    <span style="font-weight: 800; color: #4ade80;">+${h.rub.toLocaleString('ru-RU')} ₽</span>
+                    <span style="font-weight:800; color:#4ade80;">+${h.rub.toLocaleString('ru-RU')} ₽</span>
                 </div>
             `).join('');
         } else {
-            historyContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">У вас пока нет выполненных обменов</div>';
+            historyContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">История пуста</div>';
         }
 
-        // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
         function switchTab(tabName, btn) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
             btn.classList.add('active');
             document.getElementById(`tab-${tabName}`).classList.add('active');
         }
@@ -554,14 +591,13 @@
         function copyRefLink() {
             const link = `https://t.me/G00D_EXCHBot?start=${user.id || 0}`;
             navigator.clipboard.writeText(link);
-            tg.showAlert('✅ Реферальная ссылка скопирована!');
+            tg.showAlert('✅ Ссылка скопирована!');
         }
 
         function openTelegramSupport() {
             tg.openTelegramLink('https://t.me/babocha');
         }
 
-        // CANVAS МЛЕЧНЫЙ ПУТЬ
         const canvas = document.getElementById('stars-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [];
