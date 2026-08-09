@@ -629,11 +629,21 @@ if (rateElem && appData.rate) {
         }
 
         function switchTab(tabName, btn) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-        }
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    
+    if (btn) {
+        btn.classList.add('active');
+    } else {
+        // Если кнопка не передана, ищем её по ID
+        const targetBtn = document.getElementById(`btn-${tabName}`);
+        if (targetBtn) targetBtn.classList.add('active');
+    }
+
+    const targetTab = document.getElementById(`tab-${tabName}`);
+    if (targetTab) targetTab.classList.add('active');
+}
 
         function copyRefLink() {
             const link = `https://t.me/G00D_EXCHBot?start=${user.id || 0}`;
