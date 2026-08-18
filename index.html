@@ -378,7 +378,7 @@
         <!-- 2️⃣ ВКЛАДКА: ОБМЕН -->
         <div id="tab-exchange" class="tab-content">
             <div class="glass-card">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;">
                     <h2 style="margin: 0; font-size: 20px;">Калькулятор обмена</h2>
                     <div style="font-size: 13px; font-weight: 600; color: var(--text-muted);">
                         Курс USDT: <span id="exchangeTabRate" style="color: var(--accent-gold); font-weight: 700;">98.50 ₽</span>
@@ -445,7 +445,7 @@
                 <div class="stats-grid" style="margin-bottom: 16px;">
                     <div class="stat-card">
                         <div class="stat-label">Рефералов</div>
-                        <div class="stat-value" id="refCount">0</div>
+                        <div class="stat-value" id="refCountTab">0</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Заработано</div>
@@ -469,42 +469,42 @@
         try {
             const rawData = urlParams.get('data');
             if (rawData) appData = JSON.parse(decodeURIComponent(rawData));
-        } catch(e) {}
+        } catch(e) {
+            console.error("Ошибка парсинга data:", e);
+        }
 
-        const currentRate = appData.rate || 98.5;
+        const currentRate = parseFloat(appData.rate) || 98.5;
 
-const rateElem = document.getElementById('exchangeTabRate');
-if (rateElem && appData.rate) {
-    rateElem.innerText = `${appData.rate} ₽`;
-}
+        const rateElem = document.getElementById('exchangeTabRate');
+        if (rateElem) {
+            rateElem.innerText = `${currentRate.toFixed(2)} ₽`;
+        }
 
-// 🎯 ДОБАВЬ ЭТОТ БЛОК: Авто-переключение на нужную вкладку из URL (например ?tab=exchange)
-window.addEventListener('DOMContentLoaded', () => {
-    const tabParam = urlParams.get('tab');
-    if (tabParam) {
-        switchTab(tabParam, document.getElementById(`btn-${tabParam}`));
-    }
-});
+        window.addEventListener('DOMContentLoaded', () => {
+            const tabParam = urlParams.get('tab');
+            if (tabParam) {
+                switchTab(tabParam);
+            }
+        });
 
         function calcRub() {
             const usdt = parseFloat(document.getElementById('usdtInput').value) || 0;
             document.getElementById('rubInput').value = `${(usdt * currentRate).toFixed(2)} ₽`;
         }
 
-        // 🔗 Твои актуальные ссылки
         const OPERATOR_USERNAME = "G00D_EXCH"; 
         const REVIEWS_LINK = "https://t.me/GOOD_EXCH_OPERATORS"; 
         const CHANNEL_LINK = "https://t.me/goodchange1611"; 
 
         function submitOrder() {
-            const usdt = document.getElementById('usdtInput').value;
-            const phone = document.getElementById('phoneInput').value;
-            const fullName = document.getElementById('nameInput').value;
-            const bankName = document.getElementById('bankInput').value;
-            const cardNumber = document.getElementById('cardInput').value;
+            const usdtVal = parseFloat(document.getElementById('usdtInput').value);
+            const phone = document.getElementById('phoneInput').value.trim();
+            const fullName = document.getElementById('nameInput').value.trim();
+            const bankName = document.getElementById('bankInput').value.trim();
+            const cardNumber = document.getElementById('cardInput').value.trim();
 
-            if (!usdt || parseFloat(usdt) <= 0) { 
-                tg.showAlert('Введите сумму USDT'); 
+            if (isNaN(usdtVal) || usdtVal <= 0) { 
+                tg.showAlert('Введите корректную сумму USDT'); 
                 return; 
             }
             if (!phone) { 
@@ -512,14 +512,14 @@ window.addEventListener('DOMContentLoaded', () => {
                 return; 
             }
 
-            const rub = (usdt * currentRate).toFixed(2);
+            const rub = (usdtVal * currentRate).toFixed(2);
             const userId = tg.initDataUnsafe?.user?.id || '---';
 
             const orderText = 
 `🧾 ЗАЯВКА НА ОБМЕН #G00D
 
 🆔 ID: ${userId}
-💵 Сумма: ${usdt} USDT (${rub} ₽)
+💵 Сумма: ${usdtVal} USDT (${rub} ₽)
 📱 Телефон: ${phone}
 👤 ФИО: ${fullName || 'Не указано'}
 🏦 Банк: ${bankName || 'Не указан'}
@@ -544,7 +544,6 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // ✅ Прямые ссылки на Telegram
         function openSupport() { tg.openTelegramLink(`https://t.me/${OPERATOR_USERNAME}`); }
         function openReviews() { tg.openTelegramLink(REVIEWS_LINK); }
         function openChannel() { tg.openTelegramLink(CHANNEL_LINK); }
@@ -561,7 +560,6 @@ window.addEventListener('DOMContentLoaded', () => {
             avatarEl.innerText = firstName[0].toUpperCase();
         }
 
-        // 🏆 ПОЛНЫЙ СПИСОК ЗВАНИЙ (как было изначально)
         function getRankInfo(vol) {
             if (vol < 10000) return { name: "Новичок I", icon: "🥉" };
             else if (vol < 20000) return { name: "Новичок II", icon: "🥉" };
@@ -586,10 +584,10 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         if (appData.user_stats) {
-            const vol = appData.user_stats.volume || 0;
-            const vol24 = appData.user_stats.volume_24h || 0;
-            const ex = appData.user_stats.exchanges || 0;
-            const refCount = appData.user_stats.ref_count || 0;
+            const vol = parseFloat(appData.user_stats.volume) || 0;
+            const vol24 = parseFloat(appData.user_stats.volume_24h) || 0;
+            const ex = parseInt(appData.user_stats.exchanges) || 0;
+            const refCount = parseInt(appData.user_stats.ref_count) || 0;
 
             document.getElementById('totalExchanges').innerText = ex;
             document.getElementById('totalVolume').innerText = `${vol.toLocaleString('ru-RU')} ₽`;
@@ -599,8 +597,8 @@ window.addEventListener('DOMContentLoaded', () => {
             const r = getRankInfo(vol);
             document.getElementById('userRankBadge').innerHTML = `${r.icon} ${r.name}`;
 
-            document.getElementById('refCount').innerText = refCount;
-            document.getElementById('refIncome').innerText = `${(appData.user_stats.ref_income || 0).toFixed(2)} ₽`;
+            document.getElementById('refCountTab').innerText = refCount;
+            document.getElementById('refIncome').innerText = `${(parseFloat(appData.user_stats.ref_income) || 0).toFixed(2)} ₽`;
         }
 
         const topContainer = document.getElementById('topList');
@@ -609,9 +607,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 <div class="list-item">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <span style="font-weight:800; width:24px;">${index + 1}</span>
-                        <span style="font-weight:600;">@${item.username}</span>
+                        <span style="font-weight:600;">@${item.username || 'скрыт'}</span>
                     </div>
-                    <span style="font-weight:800; color:var(--accent-gold);">${item.volume.toLocaleString('ru-RU')} ₽</span>
+                    <span style="font-weight:800; color:var(--accent-gold);">${(parseFloat(item.volume) || 0).toLocaleString('ru-RU')} ₽</span>
                 </div>
             `).join('');
         } else {
@@ -629,7 +627,7 @@ window.addEventListener('DOMContentLoaded', () => {
                             <div style="font-size:11px; color:var(--text-muted);">${h.date}</div>
                         </div>
                     </div>
-                    <span style="font-weight:800; color:#4ade80;">+${h.rub.toLocaleString('ru-RU')} ₽</span>
+                    <span style="font-weight:800; color:#4ade80;">+${(parseFloat(h.rub) || 0).toLocaleString('ru-RU')} ₽</span>
                 </div>
             `).join('');
         } else {
@@ -637,26 +635,26 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         function switchTab(tabName, btn) {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    
-    // Если передана конкретная кнопка — делаем её активной
-    if (btn) {
-        btn.classList.add('active');
-    } else {
-        // Если кнопка не передана, ищем её по ID
-        const targetBtn = document.getElementById(`btn-${tabName}`);
-        if (targetBtn) targetBtn.classList.add('active');
-    }
+            const targetBtn = btn || document.getElementById(`btn-${tabName}`);
+            const targetTab = document.getElementById(`tab-${tabName}`);
 
-    const targetTab = document.getElementById(`tab-${tabName}`);
-    if (targetTab) targetTab.classList.add('active');
-}
+            if (!targetTab) return;
+
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            if (targetBtn) targetBtn.classList.add('active');
+            targetTab.classList.add('active');
+        }
 
         function copyRefLink() {
             const link = `https://t.me/G00D_EXCH_Bot?start=${user.id || 0}`;
-            navigator.clipboard.writeText(link);
-            tg.showAlert('✅ Ссылка скопирована!');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(link);
+                tg.showAlert('✅ Ссылка скопирована!');
+            } else {
+                tg.showAlert(`Ваша ссылка:\n${link}`);
+            }
         }
 
         const canvas = document.getElementById('stars-canvas');
