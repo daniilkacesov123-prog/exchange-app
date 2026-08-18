@@ -314,7 +314,6 @@
             <button class="nav-btn active" id="btn-profile" onclick="switchTab('profile', this)">👤 Профиль</button>
             <button class="nav-btn" id="btn-exchange" onclick="switchTab('exchange', this)">💱 Обмен</button>
             <button class="nav-btn" id="btn-history" onclick="switchTab('history', this)">📜 История</button>
-            <button class="nav-btn" id="btn-top" onclick="switchTab('top', this)">🏆 Топ-50</button>
             <button class="nav-btn" id="btn-ref" onclick="switchTab('ref', this)">👥 Рефка</button>
         </div>
 
@@ -426,14 +425,7 @@
             </div>
         </div>
 
-        <!-- 4️⃣ ВКЛАДКА: ТОП-50 -->
-        <div id="tab-top" class="tab-content">
-            <div class="list-card" id="topList">
-                <div style="text-align: center; color: var(--text-muted); padding: 20px;">Загрузка рейтинга...</div>
-            </div>
-        </div>
-
-        <!-- 5️⃣ ВКЛАДКА: РЕФЕРАЛКА -->
+        <!-- 4️⃣ ВКЛАДКА: РЕФЕРАЛКА -->
         <div id="tab-ref" class="tab-content">
             <div class="glass-card" style="text-align: center;">
                 <div style="font-size: 36px; margin-bottom: 8px;">👥</div>
@@ -599,21 +591,6 @@
 
             document.getElementById('refCountTab').innerText = refCount;
             document.getElementById('refIncome').innerText = `${(parseFloat(appData.user_stats.ref_income) || 0).toFixed(2)} ₽`;
-        }
-
-        const topContainer = document.getElementById('topList');
-        if (appData.top50 && appData.top50.length > 0) {
-            topContainer.innerHTML = appData.top50.map((item, index) => `
-                <div class="list-item">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-weight:800; width:24px;">${index + 1}</span>
-                        <span style="font-weight:600;">@${item.username || 'скрыт'}</span>
-                    </div>
-                    <span style="font-weight:800; color:var(--accent-gold);">${(parseFloat(item.volume) || 0).toLocaleString('ru-RU')} ₽</span>
-                </div>
-            `).join('');
-        } else {
-            topContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 15px;">Список лидеров пуст</div>';
         }
 
         const historyContainer = document.getElementById('historyList');
